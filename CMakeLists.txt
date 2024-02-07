@@ -9,7 +9,7 @@ FetchContent_Declare(ftxui
 FetchContent_MakeAvailable(ftxui)
  
 project(log_monitor LANGUAGES CXX VERSION 1.0.0)
-add_executable(log_monitor src/main.cpp)
+add_executable(log_monitor main.cpp)
 target_link_libraries(log_monitor
  PRIVATE ftxui::screen
  PRIVATE ftxui::dom
