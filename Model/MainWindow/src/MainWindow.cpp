@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include <memory>  // for shared_ptr, allocator, __shared_ptr_access
- 
+#include <iostream>
+#include <string> 
 #include "ftxui/component/captured_mouse.hpp"  // for ftxui
 #include "ftxui/component/component.hpp"  // for Renderer, ResizableSplitBottom, ResizableSplitLeft, ResizableSplitRight, ResizableSplitTop
 #include "ftxui/component/component_base.hpp"      // for ComponentBase
@@ -11,44 +12,39 @@ using namespace ftxui;
 MainWindow::MainWindow() : title_("My Application") {}
 
 void MainWindow::Run() {
-    auto left = Renderer([] { return text("Left") | center; });
-    auto right = Renderer([] { return text("right") | center; });
-    auto top = Renderer([] { return text("top") | center; });
-/*
-    int left_size = 20;
-    int right_size = 20;
-    int top_size = 10;
-   */
 
-    int left_right_size = 20;
-    int top_size = 10;
-    auto left_right = Renderer ([] {
-        return hbox({
-          left,
-          right,
-        });
+    std::string key;
+    Component input_key = Input(&key, "key entry field");
+
+    auto container = Container::Vertical({
+        input_key,
     });
-
-    auto container = Renderer([]{return text("");});
-    container = ResizableSplitTop(top, container, &top_size);
-   // container = ResizableSplitLeft(left, container, &left_size);
-   // container = ResizableSplitRight(right, container, &right_size);
    
+    auto features = Renderer(container, [&]{
+        return hbox(text("key : "), 
+        input_key->Render()| border);
+    });
+  
+  
+    auto textarea = Renderer([]{
+        return text("right");
+    });
+  
 
+    int size = 30;
+    auto layout = ResizableSplitLeft(features, textarea, &size);
 
-    auto renderer = Renderer(container, [&] { return container->Render() | border; });
-
-
+    auto component = Renderer(layout, [&] {
+        return vbox({
+            text("Top"),
+            separator(),
+            layout->Render() | flex,
+                })|
+            border;
+        });
+ 
     auto screen = ScreenInteractive::Fullscreen();
-    screen.Loop(renderer);
+    screen.Loop(component);
+
 }
-
-
-
-
-
-
-
-void MainWindow::Render() {
-   }
 
