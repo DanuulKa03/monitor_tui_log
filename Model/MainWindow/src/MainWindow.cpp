@@ -14,16 +14,13 @@ MainWindow::MainWindow() : title_("My Application") {}
 void MainWindow::Run() {
 
     std::string key;
-    Component input_key = Input(&key, "key entry field");
-
-    auto container = Container::Horizontal({
-        input_key,
-    });
+    auto input_key = Input(&key, "key entry field");
 
     auto buttonImport = Button("Import",[&] {});
     auto buttonExport = Button("Export",[&] {});
 
     auto containerButton = Container::Vertical({
+        input_key,
         buttonImport,
         buttonExport,
     });
