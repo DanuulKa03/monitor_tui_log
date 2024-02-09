@@ -16,13 +16,32 @@ void MainWindow::Run() {
     std::string key;
     Component input_key = Input(&key, "key entry field");
 
-    auto container = Container::Vertical({
+    auto container = Container::Horizontal({
         input_key,
     });
-   
-    auto features = Renderer(container, [&]{
-        return hbox(text("key : "), 
-        input_key->Render()| border);
+
+    auto buttonImport = Button("Import",[&] {});
+    auto buttonExport = Button("Export",[&] {});
+
+    auto containerButton = Container::Vertical({
+        buttonImport,
+        buttonExport,
+    });
+
+    auto features = Renderer(containerButton, [&]{
+        return vbox({
+
+            hbox({
+                text("key : "),
+                input_key->Render()
+            }),
+
+            separator(),
+
+            buttonImport->Render(),
+            buttonExport->Render(),
+
+        });
     });
   
   
@@ -47,4 +66,3 @@ void MainWindow::Run() {
     screen.Loop(component);
 
 }
-
