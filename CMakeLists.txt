@@ -10,7 +10,9 @@ FetchContent_Declare(ftxui
 )
 FetchContent_MakeAvailable(ftxui)
 
-add_executable(log_monitor main.cpp Model/MainWindow/src/MainWindow.cpp)
+add_executable(log_monitor main.cpp Model/MainWindow/src/MainWindow.cpp
+        Model/DialogComponent/src/DialogComponent.cpp
+)
 
 target_include_directories(log_monitor PRIVATE "Model/MainWindow/include")
 
