@@ -8,7 +8,14 @@ FetchContent_Declare(ftxui
  GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
  GIT_TAG main # Important: Specify a version or a commit hash here.
 )
+
+FetchContent_Declare(ftxui-grid-container
+        GIT_REPOSITORY https://github.com/mingsheng13/grid-container-ftxui
+        GIT_TAG master
+)
+
 FetchContent_MakeAvailable(ftxui)
+FetchContent_MakeAvailable(ftxui-grid-container)
 
 add_executable(log_monitor main.cpp Model/MainWindow/src/MainWindow.cpp
         Model/DialogComponent/src/DialogComponent.cpp
@@ -17,6 +24,7 @@ add_executable(log_monitor main.cpp Model/MainWindow/src/MainWindow.cpp
 target_include_directories(log_monitor PRIVATE "Model/MainWindow/include")
 
 target_link_libraries(log_monitor
+ PRIVATE ftxui-grid-container
  PRIVATE ftxui::screen
  PRIVATE ftxui::dom
  PRIVATE ftxui::component # Not needed for this example.
