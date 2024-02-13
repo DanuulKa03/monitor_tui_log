@@ -16,6 +16,6 @@
 
 using namespace ftxui;
 
-Component DialogComponent(std::function<void()> do_nothing, std::function<void()> hide_modal);
+Component DialogComponent(std::string &filePath, std::function<void()> do_nothing, std::function<void()> hide_modal);
 
 #endif //LOG_MONITOR_DIALOGCOMPONENT_HPP
