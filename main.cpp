@@ -2,7 +2,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-
+#include <regex>
 
 void fileValidator (std::string string){
     
@@ -24,14 +24,21 @@ int main(int argc, char* argv[]) {
     std::ifstream in(filename); 
     if (in.is_open())
     {
+
+        std::smatch match;
+        std::regex pattern("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] \\(Firmware:(Info|Debug|Warning|Critical|Fatal)\\) \\b(\\w+): ");
+
         while (std::getline(in, line))
         {
-            std::cout << line << std::endl;
+            if (std::regex_search(line, match, pattern)) {
+                std::cout << "Useful part: " << match.str()<<  match.suffix() << std::endl;
+            } else {
+                std::cout << "Useful part not found." << std::endl;
+            }
         }
     }
     in.close();     
-
-
+    
     return 0;
 
 }
