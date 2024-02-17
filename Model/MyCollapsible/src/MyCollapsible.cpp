@@ -4,10 +4,10 @@
 
 #include"../include/MyCollapsible.hpp"
 
-Component MyCollapsible(ConstStringRef label, Component child, Ref<bool> show) {
+Component MyCollapsible(ConstStringRef label, Ref<bool> show) {
     class Impl : public ComponentBase {
     public:
-        Impl(ConstStringRef label, Component child, Ref<bool> show) : show_(show) {
+        Impl(ConstStringRef label, Ref<bool> show) : show_(show) {
             CheckboxOption opt;
             opt.transform = [](EntryState s) {            // NOLINT
                 auto prefix = text(s.state ? "▼ " : "▶ ");  // NOLINT
@@ -18,15 +18,14 @@ Component MyCollapsible(ConstStringRef label, Component child, Ref<bool> show) {
                 if (s.focused) {
                     t |= inverted;
                 }
-                return hbox({prefix, t});
+                return hflow({prefix, t});
             };
             Add(Container::Vertical({
                                             Checkbox(label, show_.operator->(), opt),
-                                            Maybe(std::move(child), show_.operator->()),
                                     }));
         }
         Ref<bool> show_;
     };
 
-    return Make<Impl>(std::move(label), std::move(child), show);
+    return Make<Impl>(std::move(label), show);
 }

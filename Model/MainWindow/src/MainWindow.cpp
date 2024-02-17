@@ -7,10 +7,15 @@
 #include "ftxui/screen/color.hpp"
 #include "MainWindow.h"
 #include "../../DialogComponent/include/DialogComponent.hpp"
+#include "../../MyCollapsible/include/MyCollapsible.hpp"
 
 using namespace ftxui;
 
 MainWindow::MainWindow() : title_("Monitor log") {}
+
+Component Empty() {
+    return std::make_shared<ComponentBase>();
+}
 
 void MainWindow::Run() {
 
@@ -32,14 +37,13 @@ void MainWindow::Run() {
     auto container = Container::Vertical({});
 
     auto textarea = Renderer(container,[&]{
-        return vbox({
-                            text("right"),
-                            container->Render(),
+        return hflow({
+                            container->Render() | vscroll_indicator | size(HEIGHT, LESS_THAN, 100),
                     });
-    }) | bgcolor(Color::Red);
+    });
     auto buttonAdd = Button("Add", [&]{
-        container->Add(Button("Hello", [&]{}, ButtonOption::Ascii()) | flex );
-        screen.Print();
+        container->Add(MyCollapsible("Feb 05 18:36:49 imx8 PiklemaLauncher[83418]: [2024-02-05 18:36:49] (Firmware:Info) Controller: Message to enqueue: {\"course\":\"0\",\"gps_quality\":\"2.08\",\"gps_time\":\"183648\",\"hdop\":\"2.08\",\"height\":\"111.8\",\"lat\":\"51.310811\",\"lon\":\"40.504652\",\"satelite_count\":\"6\",\"speed\":\"0.859328\",\"time\":\"1707158209623\",\"x_acceleration\":\"0\",\"x_vibration_amplitude\":\"0\",\"x_vibration_frequency\":\"0\",\"x_vibration_speed\":\"0\",\"y_acceleration\":\"0\",\"y_vibration_amplitude\":\"0\",\"y_vibration_speed\":\"0\",\"z_acceleration\":\"0\",\"z_vibration_amplitude\":\"0\",\"z_vibration_frequency\":\"0\",\"z_vibration_speed\":\"0\"}, size: 460, schema_id: 70")
+        );
     });
     //
     auto containerButton = Container::Vertical({

@@ -19,6 +19,8 @@ FetchContent_MakeAvailable(ftxui-grid-container)
 
 add_executable(log_monitor main.cpp Model/MainWindow/src/MainWindow.cpp
         Model/DialogComponent/src/DialogComponent.cpp
+        Model/MyCollapsible/src/MyCollapsible.cpp
+        Model/MyCollapsible/include/MyCollapsible.hpp
 )
 
 target_include_directories(log_monitor PRIVATE "Model/MainWindow/include")
