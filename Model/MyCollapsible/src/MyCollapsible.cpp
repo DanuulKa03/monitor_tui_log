@@ -11,7 +11,7 @@ Component MyCollapsible(ConstStringRef label, Ref<bool> show) {
             CheckboxOption opt;
             opt.transform = [](EntryState s) {            // NOLINT
                 auto prefix = text(s.state ? "▼ " : "▶ ");  // NOLINT
-                auto t = paragraph(s.label);
+                auto t = paragraph(s.state ? s.label : "<...>");
                 if (s.active) {
                     t |= bold;
                 }
