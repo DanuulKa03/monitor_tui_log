@@ -38,7 +38,7 @@ void MainWindow::Run() {
 
     auto textarea = Renderer(container,[&]{
         return hflow({
-                            container->Render() | vscroll_indicator | size(HEIGHT, LESS_THAN, 100),
+                            container->Render() | vscroll_indicator | yframe,
                     });
     });
     auto buttonAdd = Button("Add", [&]{

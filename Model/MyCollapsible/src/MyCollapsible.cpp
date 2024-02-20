@@ -18,7 +18,7 @@ Component MyCollapsible(ConstStringRef label, Ref<bool> show) {
                 if (s.focused) {
                     t |= inverted;
                 }
-                return hflow({prefix, t});
+                return hbox({prefix, t});
             };
             Add(Container::Vertical({
                                             Checkbox(label, show_.operator->(), opt),
