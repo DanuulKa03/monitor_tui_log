@@ -2,7 +2,7 @@
 // Created by dika on 15.02.2024.
 //
 
-#include"../include/MyCollapsible.hpp"
+#include"MyCollapsible.hpp"
 
 Component MyCollapsible(ConstStringRef label, Ref<bool> show) {
     class Impl : public ComponentBase {

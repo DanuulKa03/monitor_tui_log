@@ -2,7 +2,7 @@
 // Created by dika on 12.02.2024.
 //
 
-#include "../include/DialogComponent.hpp"
+#include "DialogComponent.hpp"
 
 Component DialogComponent(std::string &filePath, std::function<void()> do_nothing, std::function<void()> hide_modal)
 {

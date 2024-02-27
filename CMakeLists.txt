@@ -2,22 +2,27 @@ cmake_minimum_required (VERSION 3.11)
  
 project(log_monitor LANGUAGES CXX VERSION 1.0.0)
 
-set(CMAKE_CXX_STANDARD 17)
-
 include(FetchContent)
+
+set(CMAKE_CXX_STANDARD 17)
 set(FETCHCONTENT_UPDATES_DISCONNECTED TRUE)
+
 FetchContent_Declare(ftxui
  GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
  GIT_TAG main # Important: Specify a version or a commit hash here.
 )
 
-FetchContent_Declare(ftxui-grid-container
-        GIT_REPOSITORY https://github.com/mingsheng13/grid-container-ftxui
-        GIT_TAG master
+FetchContent_Declare(json
+        URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz
 )
 
+FetchContent_GetProperties(json)
+if(NOT json_POPULATED)
+    FetchContent_Populate(json)
+    add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+
 FetchContent_MakeAvailable(ftxui)
-FetchContent_MakeAvailable(ftxui-grid-container)
 
 add_library(DialogComponent
         Model/DialogComponent/src/DialogComponent.cpp
@@ -32,6 +37,13 @@ add_library(MyCollapsible
         Model/MyCollapsible/include/MyCollapsible.hpp
 )
 
+add_library(Json
+        Model/Json/src/json.cpp
+        Model/Json/include/json.hpp
+        Model/Json/include/expander.hpp
+        Model/Json/src/expander.cpp
+)
+
 #set_target_properties(DialogComponent PROPERTIES PUBLIC_HEADER Model/DialogComponent/include/DialogComponent.hpp)
 #set_target_properties(MainWindow PROPERTIES PUBLIC_HEADER Model/MainWindow/include/MainWindow.h)
 #set_target_properties(MyCollapsible PROPERTIES PUBLIC_HEADER Model/MyCollapsible/include/MyCollapsible.hpp)
@@ -40,22 +52,26 @@ add_library(MyCollapsible
 target_include_directories(DialogComponent PRIVATE Model/DialogComponent/include)
 target_include_directories(MainWindow PRIVATE Model/MainWindow/include)
 target_include_directories(MyCollapsible PRIVATE Model/MyCollapsible/include)
+target_include_directories(Json PRIVATE Model/Json/include)
 
 add_executable(${PROJECT_NAME} main.cpp)
+
+target_link_libraries(Json
+        PUBLIC nlohmann_json::nlohmann_json
+        PUBLIC ftxui::screen
+        PUBLIC ftxui::dom
+        PUBLIC ftxui::component
+)
 
 target_link_libraries(MainWindow
         PUBLIC DialogComponent
 )
 
 target_link_libraries(MyCollapsible
-        PUBLIC ftxui::screen
-        PUBLIC ftxui::dom
-        PUBLIC ftxui::component
+        PRIVATE Json
 )
 
 target_link_libraries(${PROJECT_NAME}
-        PRIVATE ftxui-grid-container
         PRIVATE MainWindow
         PRIVATE MyCollapsible
 )
-
