@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
+#include <unistd.h>
 
 enum class Token {
     DateTime,
@@ -12,16 +13,9 @@ enum class Token {
 };
 
 
-
-std::ifstream openFile(const std::string& filename) {
-    std::ifstream file(filename);
-    
-}
-
+// отслеживать json
 void fileValidator (std::ifstream& in){
-    
     std::string line;
-
     if (in.is_open())
     {
 
@@ -30,6 +24,8 @@ void fileValidator (std::ifstream& in){
         std::smatch match_owner;
 
         // паттерны полей полезной информации из строки
+        // boost instead of regex
+        // function getopt() <getopt.h> for argument 
         std::regex pat_datetime("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] ");
         std::regex pat_firmware("\\(Firmware:(Info|Debug|Warning|Critical|Fatal)\\) ");
         std::regex pat_owner("\\b(\\w+): ");
@@ -66,26 +62,45 @@ void fileValidator (std::ifstream& in){
     in.close();    
 }
 
-void processArguments(int argc, char* argv[]) {
-    if (argc != 3) {
-        std::cerr << "Err" << std::endl;
-        return;
-    }
-
-    std::string filename = argv[2];
-    std::cout << "File: " << filename  << std::endl;
-    std::ifstream in(filename);
-
-    fileValidator(in); 
-     
-}
-
-
 
 int main(int argc, char* argv[]) {
+    int prog_opt;
+    std::string filename;
+    std::ifstream in;
+    bool read_from_file = false;
+
     MainWindow app;
-  //  app.Run();
-    processArguments(argc, argv); 
+   // app.Run();
+
+    while ((prog_opt = getopt(argc, argv, "f:")) != -1) {
+        switch (prog_opt) {
+            case 'f':
+                filename = optarg;
+                in.open(filename);
+                if (!in.is_open()) {
+                    std::cerr << "Error: Could not open file: " << filename << std::endl;
+                    return 1;
+                }
+               read_from_file = true;
+               break;
+            default:
+                std::cerr << "Usage: " << argv[0] << " [-f|--file filename" << std::endl;
+                return 1;
+        }
+        
+    }
+
+    if (!read_from_file) {
+        std::string line;
+        while (std::getline(std::cin, line)) {
+            std::cout << line << std::endl;
+        }
+    } else {
+            fileValidator(in); 
+
+    }
+
+
     return 0;
 
 }
