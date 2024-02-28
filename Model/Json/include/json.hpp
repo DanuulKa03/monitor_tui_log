@@ -12,6 +12,8 @@
 #include "ftxui/component/screen_interactive.hpp"  // for ScreenInteractive
 #include "ftxui/dom/elements.hpp"  // for Element, operator|, text, center, border
 #include "expander.hpp"
+#include "mytoggle.hpp"
+#include "button.hpp"
 
 
 using JSON = nlohmann::json;

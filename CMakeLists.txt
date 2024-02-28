@@ -42,6 +42,10 @@ add_library(Json
         Model/Json/include/json.hpp
         Model/Json/include/expander.hpp
         Model/Json/src/expander.cpp
+        Model/Json/src/button.cpp
+        Model/Json/include/button.hpp
+        Model/Json/src/mytoggle.cpp
+        Model/Json/include/mytoggle.hpp
 )
 
 #set_target_properties(DialogComponent PROPERTIES PUBLIC_HEADER Model/DialogComponent/include/DialogComponent.hpp)
@@ -64,6 +68,7 @@ target_link_libraries(Json
 )
 
 target_link_libraries(MainWindow
+        PUBLIC nlohmann_json::nlohmann_json
         PUBLIC DialogComponent
 )
 

@@ -16,7 +16,6 @@
 
 using namespace ftxui;
 
-Component MyCollapsible(ConstStringRef label,
-                      Ref<bool> show = false);
+Component MyCollapsible(ConstStringRef label, Component child, Ref<bool> show = false);
 
 #endif //LOG_MONITOR_MYCOLLAPSIBLE_HPP
