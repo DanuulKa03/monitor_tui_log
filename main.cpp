@@ -4,6 +4,9 @@
 #include <iostream>
 #include <regex>
 #include <unistd.h>
+#include <boost/tokenizer.hpp>
+#include <boost/regex.hpp>
+
 
 enum class Token {
     DateTime,
@@ -18,47 +21,67 @@ void fileValidator (std::ifstream& in){
     std::string line;
     if (in.is_open())
     {
+	boost::regex datetime_pattern("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] ");
+    boost::regex firmware_pattern("\\(Firmware:(Info|Debug|Warning|Critical|Fatal)\\) ");
+    boost::regex owner_pattern("\\b(\\w+): ");
 
-        std::smatch match_datetime;
-        std::smatch match_firmware;
-        std::smatch match_owner;
 
-        // паттерны полей полезной информации из строки
-        // boost instead of regex
-        // function getopt() <getopt.h> for argument 
-        std::regex pat_datetime("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] ");
-        std::regex pat_firmware("\\(Firmware:(Info|Debug|Warning|Critical|Fatal)\\) ");
-        std::regex pat_owner("\\b(\\w+): ");
+    boost::smatch match_datetime;
+    boost::smatch match_firmware;
+    boost::smatch match_owner;
+	while (std::getline(in, line)){
 
-        while (std::getline(in, line))
-        {
-            if (std::regex_search(line, match_datetime, pat_datetime)
-                && std::regex_search(line, match_firmware, pat_firmware)
-                && std::regex_search(line, match_owner, pat_owner)) {
-                
-                std::string match_payload = match_owner.suffix(); // собираем подстроку после последнего совпадения в осташейся строке
-               std::cout << "Useful part: " << match_datetime.str() 
-                         << match_firmware.str() << match_owner.str()
-                         << match_payload << std::endl;
+    if (boost::regex_search(line, match_datetime, datetime_pattern)
+        && boost::regex_search(line, match_firmware, firmware_pattern)
+        && boost::regex_search(line, match_owner, owner_pattern)) {
 
-                Token token = Token::Firmware;
-                   /* if (std::regex_search(line, match_datetime, pat_datetime)) {
-                        token = Token::DateTime;
-                    } else if (std::regex_search(line, match_firmware, pat_firmware)) {
-                        token = Token::Firmware;
-                    } else if (std::regex_search(line, match_owner, pat_owner)) {
-                        token = Token::Owner;
-                    } else {
-                        token = Token::Payload;
-                }*/
-
-              //  std::cout << "Token: " << static_cast<int>(token) << std::endl;
-
-            } else {
-                std::cout << "Useful part not found." << std::endl;
-            }
-        }
+        std::string match_payload = match_owner.suffix(); 
+        std::cout << "Useful part: " << match_datetime[0]
+                  << match_firmware[0] << match_owner[0]
+                  << match_payload << std::endl;
+			}
+		}
     }
+
+     //   std::smatch match_datetime;
+     //   std::smatch match_firmware;
+     //   std::smatch match_owner;
+
+     //   // паттерны полей полезной информации из строки
+     //   // boost instead of regex
+     //   std::regex pat_datetime("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] ");
+     //   std::regex pat_firmware("\\(Firmware:(Info|Debug|Warning|Critical|Fatal)\\) ");
+     //   std::regex pat_owner("\\b(\\w+): ");
+
+     //   while (std::getline(in, line))
+     //   {
+     //       if (std::regex_search(line, match_datetime, pat_datetime)
+     //           && std::regex_search(line, match_firmware, pat_firmware)
+     //           && std::regex_search(line, match_owner, pat_owner)) {
+     //           
+     //           std::string match_payload = match_owner.suffix(); // собираем подстроку после последнего совпадения в осташейся строке
+     //          std::cout << "Useful part: " << match_datetime.str() 
+     //                    << match_firmware.str() << match_owner.str()
+     //                    << match_payload << std::endl;
+
+     //           Token token = Token::Firmware;
+     //              /* if (std::regex_search(line, match_datetime, pat_datetime)) {
+     //                   token = Token::DateTime;
+     //               } else if (std::regex_search(line, match_firmware, pat_firmware)) {
+     //                   token = Token::Firmware;
+     //               } else if (std::regex_search(line, match_owner, pat_owner)) {
+     //                   token = Token::Owner;
+     //               } else {
+     //                   token = Token::Payload;
+     //           }
+
+     //         //  std::cout << "Token: " << static_cast<int>(token) << std::endl;
+
+     //       } else {
+     //           std::cout << "Useful part not found." << std::endl;
+     //       }
+     //   }
+    
     in.close();    
 }
 
