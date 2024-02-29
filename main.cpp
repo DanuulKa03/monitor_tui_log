@@ -2,87 +2,75 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include <regex>
 #include <unistd.h>
 #include <boost/tokenizer.hpp>
 #include <boost/regex.hpp>
+#include <boost/json.hpp>
+#include <nlohmann/json.hpp>
 
+using json = nlohmann::json;
+using regex = boost::regex;
 
-enum class Token {
-    DateTime,
-    Firmware,
-    Owner,
-    Payload
-};
+nlohmann::json getJSON(std::string match_payload, boost::smatch& match_json){
+	boost::regex json_pattern("\\{.*?\\}");
+	if (boost::regex_search(match_payload, match_json, json_pattern)){
+		std::string json_string = match_json[0]; 
+		nlohmann::json j = nlohmann::json::parse(json_string);
+		return j;
+	} 
+	json error_json;
+    error_json["empty"] = "json string is empty";
+    return error_json;
+}
 
-
-// отслеживать json
+using json = nlohmann::json;
 void fileValidator (std::ifstream& in){
     std::string line;
     if (in.is_open())
     {
-	boost::regex datetime_pattern("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] ");
-    boost::regex firmware_pattern("\\(Firmware:(Info|Debug|Warning|Critical|Fatal)\\) ");
-    boost::regex owner_pattern("\\b(\\w+): ");
+			boost::regex datetime_pattern("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] ");
+			boost::regex firmware_pattern("\\(Firmware:(Info|Debug|Warning|Critical|Fatal)\\) ");
+			boost::regex owner_pattern("\\b(\\w+): ");
 
 
-    boost::smatch match_datetime;
-    boost::smatch match_firmware;
-    boost::smatch match_owner;
-	while (std::getline(in, line)){
+			boost::smatch match_datetime;
+			boost::smatch match_firmware;
+			boost::smatch match_owner;
+			while (std::getline(in, line)){
 
-    if (boost::regex_search(line, match_datetime, datetime_pattern)
-        && boost::regex_search(line, match_firmware, firmware_pattern)
-        && boost::regex_search(line, match_owner, owner_pattern)) {
+			if (boost::regex_search(line, match_datetime, datetime_pattern)
+				&& boost::regex_search(line, match_firmware, firmware_pattern)
+				&& boost::regex_search(line, match_owner, owner_pattern)) {
 
-        std::string match_payload = match_owner.suffix(); 
-        std::cout << "Useful part: " << match_datetime[0]
-                  << match_firmware[0] << match_owner[0]
-                  << match_payload << std::endl;
+				std::string match_payload = match_owner.suffix(); 
+				// boost::regex json_pattern("\\{.*?\\}");
+				boost::smatch match_json;
+
+			//	if (boost::regex_search(match_payload, match_json, json_pattern)) {
+			//		std::string json_string = match_json[0]; 
+			//		nlohmann::json j = nlohmann::json::parse(json_string);
+			nlohmann::json j;
+			j = getJSON(match_payload, match_json); 
+				if(!j.empty() && j.contains("empty")){
+						std::cout << "USEFUL PART2: " << match_datetime[0]
+						  << match_firmware[0] << match_owner[0]
+						  << match_payload << std::endl;
+
+								}
+
+				else{
+				std::cout << "USEFUL PART1: " << match_datetime[0]
+						  << match_firmware[0] << match_owner[0]
+						  << match_json.prefix() << std::setw(4) << j
+						  << match_json.suffix() << std::endl;
+
+							}
 			}
 		}
-    }
+	}
 
-     //   std::smatch match_datetime;
-     //   std::smatch match_firmware;
-     //   std::smatch match_owner;
 
-     //   // паттерны полей полезной информации из строки
-     //   // boost instead of regex
-     //   std::regex pat_datetime("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] ");
-     //   std::regex pat_firmware("\\(Firmware:(Info|Debug|Warning|Critical|Fatal)\\) ");
-     //   std::regex pat_owner("\\b(\\w+): ");
-
-     //   while (std::getline(in, line))
-     //   {
-     //       if (std::regex_search(line, match_datetime, pat_datetime)
-     //           && std::regex_search(line, match_firmware, pat_firmware)
-     //           && std::regex_search(line, match_owner, pat_owner)) {
-     //           
-     //           std::string match_payload = match_owner.suffix(); // собираем подстроку после последнего совпадения в осташейся строке
-     //          std::cout << "Useful part: " << match_datetime.str() 
-     //                    << match_firmware.str() << match_owner.str()
-     //                    << match_payload << std::endl;
-
-     //           Token token = Token::Firmware;
-     //              /* if (std::regex_search(line, match_datetime, pat_datetime)) {
-     //                   token = Token::DateTime;
-     //               } else if (std::regex_search(line, match_firmware, pat_firmware)) {
-     //                   token = Token::Firmware;
-     //               } else if (std::regex_search(line, match_owner, pat_owner)) {
-     //                   token = Token::Owner;
-     //               } else {
-     //                   token = Token::Payload;
-     //           }
-
-     //         //  std::cout << "Token: " << static_cast<int>(token) << std::endl;
-
-     //       } else {
-     //           std::cout << "Useful part not found." << std::endl;
-     //       }
-     //   }
-    
-    in.close();    
+   in.close();    
 }
 
 
@@ -106,6 +94,9 @@ int main(int argc, char* argv[]) {
                 }
                read_from_file = true;
                break;
+
+            case 'l':
+
             default:
                 std::cerr << "Usage: " << argv[0] << " [-f|--file filename" << std::endl;
                 return 1;
