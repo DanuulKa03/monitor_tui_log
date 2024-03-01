@@ -48,11 +48,6 @@ add_library(Json
         Model/Json/include/mytoggle.hpp
 )
 
-#set_target_properties(DialogComponent PROPERTIES PUBLIC_HEADER Model/DialogComponent/include/DialogComponent.hpp)
-#set_target_properties(MainWindow PROPERTIES PUBLIC_HEADER Model/MainWindow/include/MainWindow.h)
-#set_target_properties(MyCollapsible PROPERTIES PUBLIC_HEADER Model/MyCollapsible/include/MyCollapsible.hpp)
-
-
 target_include_directories(DialogComponent PRIVATE Model/DialogComponent/include)
 target_include_directories(MainWindow PRIVATE Model/MainWindow/include)
 target_include_directories(MyCollapsible PRIVATE Model/MyCollapsible/include)
