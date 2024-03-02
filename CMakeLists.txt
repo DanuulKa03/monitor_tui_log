@@ -62,6 +62,11 @@ target_include_directories(Json PRIVATE Model/Json/include)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
+target_link_libraries(DialogComponent
+        PUBLIC ftxui::dom
+        PUBLIC ftxui::component
+)
+
 target_link_libraries(Json
         PUBLIC nlohmann_json::nlohmann_json
         PUBLIC ftxui::screen
