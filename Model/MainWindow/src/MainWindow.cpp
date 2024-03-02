@@ -5,10 +5,8 @@
 #include "ftxui/component/screen_interactive.hpp"  // for ScreenInteractive
 #include "ftxui/dom/elements.hpp"  // for Element, operator|, text, center, border
 #include "ftxui/screen/color.hpp"
+
 #include "MainWindow.h"
-#include "../../DialogComponent/include/DialogComponent.hpp"
-#include "../../MyCollapsible/include/MyCollapsible.hpp"
-#include "../../Json/include/json.hpp"
 
 #include <nlohmann/json.hpp>
 using JSON = nlohmann::json;
@@ -44,15 +42,16 @@ void MainWindow::Run() {
     auto buttonExport = Button("Export",show_modal);
 
     // for Test
-    auto container = Container::Vertical({});
+    containerLog = Container::Vertical({});
 
-    auto textarea = Renderer(container,[&]{
+    auto textarea = Renderer(containerLog, [&]{
         return hflow({
-                            container->Render() | vscroll_indicator | yframe,
+                             containerLog->Render() | vscroll_indicator | yframe,
                     });
     });
-    auto buttonAdd = Button("Add", [&]{
-        std::string jsonString = "{\"course\":\"0\",\"gps_quality\":\"2.08\",\"gps_time\":\"183648\",\"hdop\":\"2.08\",\"height\":\"111.8\",\"lat\":\"51.310811\",\"lon\":\"40.504652\",\"satelite_count\":\"6\",\"speed\":\"0.859328\",\"time\":\"1707158209623\",\"x_acceleration\":\"0\",\"x_vibration_amplitude\":\"0\",\"x_vibration_frequency\":\"0\",\"x_vibration_speed\":\"0\",\"y_acceleration\":\"0\",\"y_vibration_amplitude\":\"0\",\"y_vibration_speed\":\"0\",\"z_acceleration\":\"0\",\"z_vibration_amplitude\":\"0\",\"z_vibration_frequency\":\"0\",\"z_vibration_speed\":\"0\"}";
+    auto buttonAdd = Button("Add",
+                            [&]{
+        std::string jsonString = "{\"course\":\"0\",\"gps_quality\":\"1.46\",\"gps_time\":\"183651\",\"hdop\":\"1.46\",\"height\":\"112.1\",\"lat\":\"51.310804\",\"lon\":\"40.504654\",\"satelite_count\":\"8\",\"speed\":\"1.029712\",\"time\":\"1707158212622\",\"x_acceleration\":\"0\",\"x_vibration_amplitude\":\"0\",\"x_vibration_frequency\":\"0\",\"x_vibration_speed\":\"0\",\"y_acceleration\":\"0\",\"y_vibration_amplitude\":\"0\",\"y_vibration_speed\":\"0\",\"z_acceleration\":\"0\",\"z_vibration_amplitude\":\"0\",\"z_vibration_frequency\":\"0\",\"z_vibration_speed\":\"0\"}, size: 460, schema_id: 70";
         JSON json;
         ParseJSON(jsonString,json);
         Expander expander = ExpanderImpl::Root();
@@ -62,47 +61,9 @@ void MainWindow::Run() {
         json_test =
                 Renderer(json_test, [json_test] { return json_test->Render() | yframe; });
 
-        Event previous_event;
-        Event next_event;
-        auto wrapped_component = CatchEvent(json_test, [&](Event event) {
-            previous_event = next_event;
-            next_event = event;
-
-            // 'G' and 'gg -------------------------------------------------------------
-            if (event == Event::Character('G')) {
-                while (json_test->OnEvent(Event::ArrowUp))
-                    ;
-                return true;
-            }
-            if (previous_event == Event::Character('g') &&
-                next_event == Event::Character('g')) {
-                while (json_test->OnEvent(Event::ArrowDown))
-                    ;
-                return true;
-            }
-
-            // Allow the user to quit using 'q' or ESC ---------------------------------
-            if (event == Event::Character('q') || event == Event::Escape) {
-                screen.ExitLoopClosure()();
-                return true;
-            }
-
-            // Convert mouse whell into their corresponding Down/Up events.-------------
-            if (!event.is_mouse())
-                return false;
-            if (event.mouse().button == Mouse::WheelDown) {
-                screen.PostEvent(Event::ArrowDown);
-                return true;
-            }
-            if (event.mouse().button == Mouse::WheelUp) {
-                screen.PostEvent(Event::ArrowUp);
-                return true;
-            }
-            return false;
-        });
-        container->Add(MyCollapsible("Feb 05 18:36:49 imx8 PiklemaLauncher[83418]: [2024-02-05 18:36:49] "
+        containerLog->Add(MyCollapsible("Feb 05 18:36:49 imx8 PiklemaLauncher[83418]: [2024-02-05 18:36:49] "
                                      "(Firmware:Info) Controller: ",
-                                     Inner({
+                                        Inner({
                                          json_test,
                                      })
                                      )
@@ -149,4 +110,11 @@ void MainWindow::Run() {
 
     screen.Loop(component);
 
+}
+
+bool MainWindow::appendLogToWindow(LogItem &item) {
+
+
+
+    return false;
 }

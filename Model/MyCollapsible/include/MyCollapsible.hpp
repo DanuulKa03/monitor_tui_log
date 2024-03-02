@@ -14,8 +14,10 @@
 #include "ftxui/dom/elements.hpp"  // for operator|=, text, hbox, Element, bold, inverted
 #include "ftxui/util/ref.hpp"  // for Ref, ConstStringRef
 
+#include "../../LogItem/include/LogItem.hpp"
+
 using namespace ftxui;
 
-Component MyCollapsible(ConstStringRef label, Component child, Ref<bool> show = false);
+Component MyCollapsible(LogItem& item, Component child, Ref<bool> show = false);
 
 #endif //LOG_MONITOR_MYCOLLAPSIBLE_HPP
