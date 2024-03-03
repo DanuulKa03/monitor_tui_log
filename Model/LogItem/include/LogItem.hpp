@@ -9,9 +9,9 @@
 
 class LogItem
 {
-    LogItem(std::string date_time, std::string firmware, std::string owner, std::string payload);
-
 public:
+
+    LogItem(std::string date_time, std::string firmware, std::string owner, std::string payload);
     const std::string date_time;
     const std::string firmware;
     const std::string owner;
