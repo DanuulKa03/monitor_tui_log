@@ -75,6 +75,7 @@ target_link_libraries(Json
 )
 
 target_link_libraries(MainWindow
+        PUBLIC LogItem
         PUBLIC nlohmann_json::nlohmann_json
         PUBLIC DialogComponent
 )
