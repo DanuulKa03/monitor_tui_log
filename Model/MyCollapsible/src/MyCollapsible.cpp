@@ -5,24 +5,30 @@
 #include"MyCollapsible.hpp"
 #include "../../Json/include/json.hpp"
 
-Component MyCollapsible(LogItem& item, Component child, Ref<bool> show) {
+Component MyCollapsible(const LogItem& item, Component child, Ref<bool> show) {
     class Impl : public ComponentBase {
     public:
         Impl(const LogItem& item, Component child, Ref<bool> show) : show_(show) {
             CheckboxOption opt;
-            opt.transform = [](EntryState s) {            // NOLINT
-                auto prefix = text(s.state ? "▼ " : "▶ ");  // NOLINT
-                auto t = paragraph(s.state ? "Привет <...>" : s.label);
-                if (s.active) {
-                    t |= bold;
+            opt.transform = [item](const EntryState& s) {
+                auto prefix = text(s.state ? "▼ " : "▶ ");
+                auto date_time = text(item.date_time);
+                auto firmware = text(item.firmware) | bold;
+                auto owner = text(item.owner);
+
+                if (item.firmware == "Warning") {
+                    firmware |= color(Color::Yellow);
+                } else if (item.firmware == "Critical" || item.firmware == "Fatal") {
+                    firmware |= color(Color::Red);
                 }
-                if (s.focused) {
-                    t |= inverted;
-                }
-                return hbox({prefix, t});
+
+                auto threeDots = paragraph(s.state ? s.label : "{...}");
+
+                return hbox({prefix, text(" "), date_time, text(" "), firmware, text(" "),
+                             owner, text(": "), threeDots});
             };
             Add(Container::Vertical({
-                                            Checkbox("ПОка", show_.operator->(), opt),
+                                            Checkbox(item.payload, show_.operator->(), opt),
                                             Maybe(std::move(child), show_.operator->()),
             }));
         }
