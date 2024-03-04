@@ -18,8 +18,10 @@ Component MyCollapsible(const LogItem& item, Component child, Ref<bool> show) {
 
                 if (item.firmware == "Warning") {
                     firmware |= color(Color::Yellow);
+                    prefix |= color(Color::Yellow);
                 } else if (item.firmware == "Critical" || item.firmware == "Fatal") {
                     firmware |= color(Color::Red);
+                    prefix |= color(Color::Red);
                 }
 
                 auto threeDots = paragraph(s.state ? s.label : "{...}");
