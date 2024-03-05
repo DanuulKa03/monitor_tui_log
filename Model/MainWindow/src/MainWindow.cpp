@@ -53,8 +53,17 @@ void MainWindow::Run() {
     });
     auto buttonAdd = Button("Add",
                             [&]{
-        std::string jsonString = "{\"course\":\"0\",\"gps_quality\":\"1.46\",\"gps_time\":\"183651\",\"hdop\":\"1.46\",\"height\":\"112.1\",\"lat\":\"51.310804\",\"lon\":\"40.504654\",\"satelite_count\":\"8\",\"speed\":\"1.029712\",\"time\":\"1707158212622\",\"x_acceleration\":\"0\",\"x_vibration_amplitude\":\"0\",\"x_vibration_frequency\":\"0\",\"x_vibration_speed\":\"0\",\"y_acceleration\":\"0\",\"y_vibration_amplitude\":\"0\",\"y_vibration_speed\":\"0\",\"z_acceleration\":\"0\",\"z_vibration_amplitude\":\"0\",\"z_vibration_frequency\":\"0\",\"z_vibration_speed\":\"0\"}";
+        LogItem log1("[2024-02-05 18:36:54]", "Debug", "Mqtt", "Published message of size 178 to topic customer/1/dev/394/v70");
+        LogItem log2("[2024-02-05 18:36:54]", "Critical", "Mqtt", "Published message of size 178 to topic customer/1/dev/394/v70", {
+                {"Adviser::onTelemetryUpdated(const QString&) const@adviser.cpp:248", PayloadType::code}});
+        LogItem log3("[2024-02-05 18:36:54]", "Warning", "Mqtt", "Message to enqueue",{
+            {"{\"course\":\"0\",\"gps_quality\":\"1.46\",\"gps_time\":\"183651\",\"hdop\":\"1.46\",\"height\":\"112.1\",\"lat\":\"51.310804\",\"lon\":\"40.504654\",\"satelite_count\":\"8\",\"speed\":\"1.029712\",\"time\":\"1707158212622\",\"x_acceleration\":\"0\",\"x_vibration_amplitude\":\"0\",\"x_vibration_frequency\":\"0\",\"x_vibration_speed\":\"0\",\"y_acceleration\":\"0\",\"y_vibration_amplitude\":\"0\",\"y_vibration_speed\":\"0\",\"z_acceleration\":\"0\",\"z_vibration_amplitude\":\"0\",\"z_vibration_frequency\":\"0\",\"z_vibration_speed\":\"0\"}", PayloadType::json},
+            {"size: 460, schema_id: 70",PayloadType::text}
+        });
 
+        appendLogToWindow(log1);
+        appendLogToWindow(log2);
+        appendLogToWindow(log3);
 
     });
 
@@ -109,7 +118,7 @@ bool MainWindow::appendLogToWindow(LogItem& item) {
         switch (it.second) {
             case PayloadType::text:
 
-                children.push_back(Renderer([&it] { return paragraph(it.first); }));
+                children.push_back(Renderer([it] { return paragraph(it.first); }));
 
                 break;
             case PayloadType::json:
@@ -135,13 +144,13 @@ bool MainWindow::appendLogToWindow(LogItem& item) {
             }
             case PayloadType::code:
 
-                children.push_back(Renderer([&it] { return text(it.first) | bgcolor(Color::Yellow); }));
+                children.push_back(Renderer([it] { return text(it.first) | bgcolor(Color::Yellow); }));
 
                 break;
         }
     }
 
-    if (children.empty())
+    if (!children.empty())
     {
         this->containerLog->Add(MyCollapsible(item, Inner(children)));
     }
