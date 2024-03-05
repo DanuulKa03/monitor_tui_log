@@ -113,7 +113,7 @@ bool MainWindow::appendLogToWindow(LogItem& item) {
     this->bufferLogs.push_back(item);
 
     std::vector<Component> children;
-    for (auto& it: item.payloadMap) {
+    for (auto& it: item.payloadVector) {
 
         switch (it.second) {
             case PayloadType::text:

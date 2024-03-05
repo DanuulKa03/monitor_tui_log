@@ -17,8 +17,8 @@ Component MyCollapsible(const LogItem& item, Component child, Ref<bool> show) {
                 auto owner = text(item.owner);
 
                 if (item.firmware == "Warning") {
-                    firmware |= color(Color::Yellow);
-                    prefix |= color(Color::Yellow);
+                    firmware |= color(Color::Yellow1);
+                    prefix |= color(Color::Yellow1);
                 } else if (item.firmware == "Critical" || item.firmware == "Fatal") {
                     firmware |= color(Color::Red);
                     prefix |= color(Color::Red);

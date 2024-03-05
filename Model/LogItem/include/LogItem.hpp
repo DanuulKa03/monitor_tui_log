@@ -6,7 +6,7 @@
 #define LOG_MONITOR_LOGITEM_HPP
 
 #include <string>
-#include <map>
+#include <vector>
 
 enum class PayloadType {
     text,
@@ -17,15 +17,14 @@ enum class PayloadType {
 class LogItem
 {
 public:
-
     LogItem(std::string date_time, std::string firmware, std::string owner, std::string payload,
-            std::map<std::string, PayloadType> payloadMap  = std::map<std::string, PayloadType>());
+            std::vector< std::pair<std::string, PayloadType> > payloadVector  = std::vector< std::pair<std::string, PayloadType> >());
 
     std::string date_time;
     std::string firmware;
     std::string owner;
     std::string payload;
-    std::map<std::string, PayloadType> payloadMap;
+    std::vector< std::pair<std::string, PayloadType> > payloadVector;
 };
 
 #endif //LOG_MONITOR_LOGITEM_HPP
