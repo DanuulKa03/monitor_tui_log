@@ -19,5 +19,6 @@
 using namespace ftxui;
 
 Component MyCollapsible(const LogItem& item, Component child, Ref<bool> show = false);
+Component MyCollapsible(const LogItem& item, Ref<bool> show = false);
 
 #endif //LOG_MONITOR_MYCOLLAPSIBLE_HPP
