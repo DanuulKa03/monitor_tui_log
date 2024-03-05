@@ -18,11 +18,8 @@ class LogItem
 {
 public:
 
-    LogItem(std::string date_time,
-            std::string firmware,
-            std::string owner,
-            std::string payload,
-            std::map<std::string, PayloadType> payloadMap);
+    LogItem(std::string date_time, std::string firmware, std::string owner, std::string payload,
+            std::map<std::string, PayloadType> payloadMap  = std::map<std::string, PayloadType>());
 
     std::string date_time;
     std::string firmware;

@@ -6,7 +6,7 @@
 #include "../include/LogItem.hpp"
 
 LogItem::LogItem(std::string date_time, std::string firmware, std::string owner, std::string payload,
-                 std::map<std::string, PayloadType> payloadMap = std::map<std::string, PayloadType>()) :
+                 std::map<std::string, PayloadType> payloadMap) :
         date_time(std::move(date_time)),
         firmware(std::move(firmware)),
         owner(std::move(owner)),
