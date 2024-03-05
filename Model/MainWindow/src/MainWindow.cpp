@@ -13,8 +13,6 @@ using JSON = nlohmann::json;
 
 using namespace ftxui;
 
-MainWindow::MainWindow() : title_("Monitor log") {}
-
 Component Inner(std::vector<Component> children) {
     Component vlist = Container::Vertical(std::move(children));
     return Renderer(vlist, [vlist] {
@@ -23,6 +21,10 @@ Component Inner(std::vector<Component> children) {
                             vlist->Render(),
                     });
     });
+}
+
+MainWindow::MainWindow() : title_("Monitor log") {
+    bufferLogs.set_capacity(sizeCapacity);
 }
 
 void MainWindow::Run() {
@@ -52,23 +54,8 @@ void MainWindow::Run() {
     auto buttonAdd = Button("Add",
                             [&]{
         std::string jsonString = "{\"course\":\"0\",\"gps_quality\":\"1.46\",\"gps_time\":\"183651\",\"hdop\":\"1.46\",\"height\":\"112.1\",\"lat\":\"51.310804\",\"lon\":\"40.504654\",\"satelite_count\":\"8\",\"speed\":\"1.029712\",\"time\":\"1707158212622\",\"x_acceleration\":\"0\",\"x_vibration_amplitude\":\"0\",\"x_vibration_frequency\":\"0\",\"x_vibration_speed\":\"0\",\"y_acceleration\":\"0\",\"y_vibration_amplitude\":\"0\",\"y_vibration_speed\":\"0\",\"z_acceleration\":\"0\",\"z_vibration_amplitude\":\"0\",\"z_vibration_frequency\":\"0\",\"z_vibration_speed\":\"0\"}";
-        JSON json;
-        ParseJSON(jsonString,json);
-        Expander expander = ExpanderImpl::Root();
-        auto json_test = From(json, /*is_last=*/true, /*depth=*/0, expander);
 
-        // Wrap it inside a frame, to allow scrolling.
-        json_test =
-                Renderer(json_test, [json_test] { return json_test->Render() | yframe; });
 
-        LogItem test = LogItem("[2024-02-05 16:39:19]", "Warning", "Mqtt", "Published message of size 178 to topic customer/1/dev/394/v70");
-
-        containerLog->Add(MyCollapsible(test,
-                                        Inner({
-                                         json_test,
-                                     })
-                                     )
-        );
     });
 
     auto containerButton = Container::Vertical({
@@ -113,7 +100,56 @@ void MainWindow::Run() {
 
 }
 
-bool MainWindow::appendLogToWindow(LogItem &item) {
+bool MainWindow::appendLogToWindow(LogItem& item) {
+    this->bufferLogs.push_back(item);
+
+    std::vector<Component> children;
+    for (auto& it: item.payloadMap) {
+
+        switch (it.second) {
+            case PayloadType::text:
+
+                children.push_back(Renderer([&it] { return paragraph(it.first); }));
+
+                break;
+            case PayloadType::json:
+            {
+                JSON json;
+                if (ParseJSON(it.first,json))
+                {
+                    Expander expander = ExpanderImpl::Root();
+                    auto json_test = From(json, /*is_last=*/true, /*depth=*/0, expander);
+
+                    // Wrap it inside a frame, to allow scrolling.
+                    json_test =
+                            Renderer(json_test, [json_test] { return json_test->Render() | yframe; });
+
+                    children.push_back(json_test);
+                }
+                else
+                {
+                    // TODO нужно сделать обрабтку ошибок
+                }
+
+                break;
+            }
+            case PayloadType::code:
+
+                children.push_back(Renderer([&it] { return text(it.first) | bgcolor(Color::Yellow); }));
+
+                break;
+        }
+    }
+
+    if (children.empty())
+    {
+        this->containerLog->Add(MyCollapsible(item, Inner(children)));
+    }
+    else
+    {
+        this->containerLog->Add(MyCollapsible(item));
+    }
+
 
 
 

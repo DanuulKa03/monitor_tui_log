@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <boost/circular_buffer.hpp>
 
 #include "../../DialogComponent/include/DialogComponent.hpp"
 #include "../../MyCollapsible/include/MyCollapsible.hpp"
@@ -24,7 +26,13 @@ private:
     std::string title_;
     Component containerLog;
 
+    int sizeCapacity = 100;
+    boost::circular_buffer<LogItem> bufferLogs;
+
+//    bool appendLogToWindow(LogItem& item);
+
     bool appendLogToWindow(LogItem& item);
+
 };
 
 #endif
