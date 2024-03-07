@@ -37,7 +37,6 @@ add_library(DialogComponent
 add_library(LogItem
         Model/LogItem/src/LogItem.cpp
         Model/LogItem/include/LogItem.hpp
-
 )
 
 add_library(MainWindow
