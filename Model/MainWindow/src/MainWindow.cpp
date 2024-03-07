@@ -51,19 +51,7 @@ MainWindow::Run()
     auto input_key = Input(&key, "key entry field",
                            {
                                //это обработка ввода текста
-                               .on_change = [&]
-                               {
-
-                                   containerLog->DetachAllChildren();
-
-                                   for (auto &it : bufferLogs) {
-                                       if (key.compare(it.owner) == 0) {
-                                           appendLogToWindow(it);
-                                       }
-
-                                   }
-
-                               },
+                               .on_change = filterOwner(key),
                            });
 
     auto buttonExport = Button("Export", show_modal);
@@ -165,7 +153,7 @@ MainWindow::appendLogToWindow(LogItem &item)
 
                 children.push_back(Renderer([it]
                                             {
-                    return paragraph(it.first);
+                                                return paragraph(it.first);
                                             }));
 
                 break;
@@ -207,4 +195,20 @@ MainWindow::appendLogToWindow(LogItem &item)
 
 
     return false;
+}
+
+std::function<void()> MainWindow::filterOwner(std::string &key)
+{
+    return [&]
+    {
+        containerLog->DetachAllChildren();
+
+        for (auto &it : bufferLogs) {
+            if (key.compare(it.owner) == 0) {
+                appendLogToWindow(it);
+            }
+
+        }
+
+    };
 }

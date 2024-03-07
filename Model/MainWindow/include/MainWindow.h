@@ -13,6 +13,7 @@
 
 class MainWindow {
 public:
+    //TODO Написать класс, который будет принимать число логов в конструкторе и обрабатывать это
     MainWindow();
     void Run();
     void Render();
@@ -26,12 +27,18 @@ private:
     std::string title_;
     Component containerLog;
 
+    //TODO по идеи, при запуске программы, мы можем посчитать сколько будет файлов или потоков и при
+    // создании экземпляра класса сразу заполнить
+
+    std::vector<std::string> tab_titles;
+    int selected_tab = 0;
+
     const int sizeCapacity = 100;
     boost::circular_buffer<LogItem> bufferLogs;
 
-//    bool appendLogToWindow(LogItem& item);
+    bool appendLogToWindow(LogItem& item); //добавляет логи в окно containerLog
 
-    bool appendLogToWindow(LogItem& item);
+    std::function<void()> filterOwner(std::string& key); //лямбда фунция для фильтрации логов по owner
 
 };
 
