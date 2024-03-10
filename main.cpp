@@ -7,25 +7,14 @@
 #include <boost/regex.hpp>
 #include <boost/json.hpp>
 #include <nlohmann/json.hpp>
-
+#include "Model/JsonParser/include/getJson.hpp"
+#include "Model/LogValidator/include/LogValidator.hpp"
 using json = nlohmann::json;
 using regex = boost::regex;
 using smatch = boost::smatch;
 
-
-json getJSON(std::string match_payload, smatch& match_json){
-	regex json_pattern("\\{.*?\\}");
-	if (regex_search(match_payload, match_json, json_pattern)){
-		std::string json_string = match_json[0]; 
-		json j = json::parse(json_string);
-		return j;
-	} 
-	json error_json;
-    error_json["empty"] = "json string is empty";
-    return error_json;
-}
-
-void fileValidator (std::istream& in){
+/*
+void logValidator (std::istream& in){
     std::string line;
 	regex datetime_pattern("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] ");
 	regex firmware_pattern("\\(Firmware:(Info|Debug|Warning|Critical|Fatal)\\) ");
@@ -41,7 +30,7 @@ void fileValidator (std::istream& in){
 			&& regex_search(line, match_owner, owner_pattern)) {
 
 			std::string match_payload = match_owner.suffix(); 
-			boost::smatch match_json;
+			smatch match_json;
 
 			json j;
 			j = getJSON(match_payload, match_json); 
@@ -62,7 +51,7 @@ void fileValidator (std::istream& in){
 		}
 	}
 }
-
+*/
 
 int main(int argc, char* argv[]) {
     int prog_opt;
@@ -73,7 +62,7 @@ int main(int argc, char* argv[]) {
     MainWindow app;
    // app.Run();
 
-    while ((prog_opt = getopt(argc, argv, "f:")) != -1) {
+    while ((prog_opt = getopt(argc, argv, "f:l")) != -1) {
         switch (prog_opt) {
             case 'f':
                 filename = optarg;
@@ -96,12 +85,18 @@ int main(int argc, char* argv[]) {
         
     }
 
+    LogValidator validator;
+
     if (!read_from_file) {
         std::string line;
-		fileValidator(std::cin);
+    //   logValidator(std::cin);
+		validator.validateLog(std::cin);
+        
     } else {
 		if (in.is_open()){
-            fileValidator(in); 
+         //   logValidator(in);
+           validator.validateLog(in);
+          // validateLog(in);
 			in.close();
 		}
 

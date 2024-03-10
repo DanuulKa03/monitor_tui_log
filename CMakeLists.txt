@@ -12,9 +12,16 @@ FetchContent_MakeAvailable(ftxui)
 
 add_executable(log_monitor main.cpp Model/MainWindow/src/MainWindow.cpp
         Model/DialogComponent/src/DialogComponent.cpp
+        Model/JsonParser/src/getJson.cpp
+        Model/LogValidator/src/LogValidator.cpp
 )
-
+add_library(JsonParser
+        Model/JsonParser/src/getJson.cpp
+        Model/JsonParser/include/getJson.hpp
+)
 target_include_directories(log_monitor PRIVATE "Model/MainWindow/include")
+target_include_directories(log_monitor PRIVATE "Model/LogValidator/include")
+target_include_directories(log_monitor PRIVATE "Model/JsonParser/include")
 
 target_link_libraries(log_monitor
  PRIVATE ftxui::screen
