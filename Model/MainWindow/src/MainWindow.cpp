@@ -26,10 +26,15 @@ Inner(std::vector<Component> children)
     });
 }
 
-MainWindow::MainWindow()
+MainWindow::MainWindow(size_t countTabulations)
     : title_("Monitor log")
 {
     bufferLogs.set_capacity(sizeCapacity);
+
+    for (size_t i = 0; i < countTabulations; i++)
+    {
+        tab_titles.push_back("Tab " + std::to_string(i+1));
+    }
 }
 
 void
@@ -121,10 +126,14 @@ MainWindow::Run()
     int size = 30;
     auto layout = ResizableSplitLeft(features, textarea, &size);
 
+    //TODO !!! Сделать нормальное разбиение на функции по примеру menu_style.cpp
+    auto option = MenuOption::Horizontal();
+    auto tab_toggle = Menu(&tab_titles, &selected_tab, option);
+
     auto component = Renderer(layout, [&]
     {
         return vbox({
-                        text("Top"),
+                        tab_toggle->Render(),
                         separator(),
                         layout->Render() | flex,
                     }) | border;
@@ -197,7 +206,8 @@ MainWindow::appendLogToWindow(LogItem &item)
     return false;
 }
 
-std::function<void()> MainWindow::filterOwner(std::string &key)
+std::function<void()>
+MainWindow::filterOwner(std::string &key)
 {
     return [&]
     {
