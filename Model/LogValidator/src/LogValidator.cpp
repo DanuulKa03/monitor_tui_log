@@ -1,8 +1,8 @@
 #include "../include/LogValidator.hpp"
 #include "../../JsonParser/include/getJson.hpp"
 
-void LogValidator::validateLog(std::istream& in){
-//void validateLog(std::istream& in){
+//void LogValidator::validateLog(std::istream& in){
+void validateLog(std::istream& in){
     std::string line;
         regex datetime_pattern("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] ");
         regex firmware_pattern("\\(Firmware:(Info|Debug|Warning|Critical|Fatal)\\) ");

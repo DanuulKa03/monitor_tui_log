@@ -9,7 +9,7 @@
 using json = nlohmann::json;
 using regex = boost::regex;
 using smatch = boost::smatch;
-
+/*
 class LogValidator {
 public:
     LogValidator();
@@ -21,5 +21,6 @@ public:
 
         #endif // LOGVALIDATOR_H
 
-
-//void validateLog(std::istream& in);
+*/
+void validateLog(std::istream& in);
+#endif // LOGVALIDATOR_H
