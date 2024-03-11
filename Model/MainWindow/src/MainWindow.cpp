@@ -13,8 +13,7 @@ using JSON = nlohmann::json;
 
 using namespace ftxui;
 
-Component
-Inner(std::vector<Component> children)
+Component Inner(std::vector<Component> children)
 {
     Component vlist = Container::Vertical(std::move(children));
     return Renderer(vlist, [vlist]
@@ -31,26 +30,18 @@ MainWindow::MainWindow(size_t countTabulations)
 {
     bufferLogs.set_capacity(sizeCapacity);
 
-    for (size_t i = 0; i < countTabulations; i++)
-    {
-        tab_titles.push_back("Tab " + std::to_string(i+1));
+    for (size_t i = 0; i < countTabulations; i++) {
+        tab_titles.push_back("Tab " + std::to_string(i + 1));
     }
 }
 
-void
-MainWindow::Run()
+void MainWindow::Run()
 {
 
     auto screen = ScreenInteractive::Fullscreen();
 
-    bool modal_shown = false;
+    bool modal_shown = false; //отображается ли окно или нет
     std::string filePath; //путь до файла, который передается через диалоговое окно
-
-    // Some actions modifying the state:
-    auto show_modal = [&]
-    { modal_shown = true; };
-    auto hide_modal = [&]
-    { modal_shown = false; };
 
     std::string key;
     auto input_key = Input(&key, "key entry field",
@@ -59,7 +50,7 @@ MainWindow::Run()
                                .on_change = filterOwner(key),
                            });
 
-    auto buttonExport = Button("Export", show_modal);
+    auto buttonExport = Button("Export", showModal(modal_shown));
 
     // for Test
     containerLog = Container::Vertical({});
@@ -139,11 +130,8 @@ MainWindow::Run()
                     }) | border;
     });
 
-    auto do_nothing = [&]
-    {};
-
     // Instanciate the main and modal components:
-    auto modal_component = DialogComponent(filePath, do_nothing, hide_modal);
+    auto modal_component = DialogComponent(filePath, exportFile(), hideModal(modal_shown));
 
     component |= Modal(modal_component, &modal_shown);
 
@@ -151,8 +139,7 @@ MainWindow::Run()
 
 }
 
-bool
-MainWindow::appendLogToWindow(LogItem &item)
+bool MainWindow::appendLogToWindow(LogItem &item)
 {
     std::vector<Component> children;
     for (auto &it : item.payloadVector) {
@@ -206,8 +193,7 @@ MainWindow::appendLogToWindow(LogItem &item)
     return false;
 }
 
-std::function<void()>
-MainWindow::filterOwner(std::string &key)
+std::function<void()> MainWindow::filterOwner(std::string &key)
 {
     return [&]
     {
@@ -220,5 +206,28 @@ MainWindow::filterOwner(std::string &key)
 
         }
 
+    };
+}
+
+// Это обработчкик событий сохранения файла
+std::function<void()> MainWindow::exportFile()
+{
+    return [&]
+    {
+
+    };
+}
+std::function<void()> MainWindow::showModal(bool &modal_shown)
+{
+    return [&]
+    {
+        modal_shown = true;
+    };
+}
+std::function<void()> MainWindow::hideModal(bool &modal_shown)
+{
+    return [&]
+    {
+        modal_shown = false;
     };
 }
