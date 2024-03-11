@@ -6,14 +6,17 @@ include(FetchContent)
 
 set(CMAKE_CXX_STANDARD 17)
 set(FETCHCONTENT_UPDATES_DISCONNECTED TRUE)
+set(BOOST_ENABLE_CMAKE ON)
 
 FetchContent_Declare(ftxui
- GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
- GIT_TAG main # Important: Specify a version or a commit hash here.
+        GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
+        GIT_TAG main # Important: Specify a version or a commit hash here.
 )
 
 FetchContent_Declare(Boost
-        URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
+        GIT_REPOSITORY https://github.com/boostorg/boost.git
+        GIT_TAG boost-1.84.0
+        GIT_SHALLOW TRUE
 )
 
 FetchContent_Declare(json
@@ -79,6 +82,7 @@ target_link_libraries(Json
 )
 
 target_link_libraries(MainWindow
+        PUBLIC Boost::circular_buffer
         PUBLIC LogItem
         PUBLIC nlohmann_json::nlohmann_json
         PUBLIC DialogComponent
