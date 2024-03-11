@@ -11,19 +11,12 @@
 #include "../../Json/include/json.hpp"
 #include "../../LogItem/include/LogItem.hpp"
 
-enum class HeadearsType
-{
-    live,
-    file
-};
-
 class MainWindow
 {
 public:
     //TODO Написать класс, который будет принимать число логов в конструкторе и обрабатывать это
     MainWindow(size_t countTabulations);
-    void
-    Run();
+    void Run();
 
 private:
     std::string title_;
@@ -38,11 +31,15 @@ private:
     const int sizeCapacity = 100;
     boost::circular_buffer<LogItem> bufferLogs;
 
-    bool
-    appendLogToWindow(LogItem &item); //добавляет логи в окно containerLog
+    bool appendLogToWindow(LogItem &item); //добавляет логи в окно containerLog
 
-    std::function<void()>
-    filterOwner(std::string &key); //лямбда фунция для фильтрации логов по owner
+    std::function<void()> filterOwner(std::string &key); //лямбда фунция для фильтрации логов по owner
+
+    std::function<void()> showModal(bool &modal_shown);
+
+    std::function<void()> hideModal(bool &modal_shown);
+
+    std::function<void()> exportFile();
 
 };
 
