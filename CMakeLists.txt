@@ -62,10 +62,16 @@ add_library(Json
         Model/Json/include/mytoggle.hpp
 )
 
+add_library(TabController
+        Model/TabController/src/TabController.cpp
+        Model/TabController/include/TabController.hpp
+)
+
 target_include_directories(DialogComponent PRIVATE Model/DialogComponent/include)
 target_include_directories(MainWindow PRIVATE Model/MainWindow/include)
 target_include_directories(MyCollapsible PRIVATE Model/MyCollapsible/include)
 target_include_directories(Json PRIVATE Model/Json/include)
+target_include_directories(TabController PRIVATE Model/TabController/include)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
@@ -82,17 +88,24 @@ target_link_libraries(Json
 )
 
 target_link_libraries(MainWindow
-        PUBLIC Boost::circular_buffer
-        PUBLIC LogItem
         PUBLIC nlohmann_json::nlohmann_json
+        PUBLIC TabController
         PUBLIC DialogComponent
 )
 
 target_link_libraries(MyCollapsible
-        PRIVATE Json
+        PUBLIC Json
+)
+
+target_link_libraries(TabController
+        PUBLIC Boost::circular_buffer
+        PRIVATE ftxui::dom
+        PRIVATE ftxui::component
+        PRIVATE LogItem
+        PRIVATE MyCollapsible
 )
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE MainWindow
-        PRIVATE MyCollapsible
+
 )
