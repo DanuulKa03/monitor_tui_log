@@ -12,10 +12,7 @@ using namespace ftxui;
 
 Component HMenu1(std::vector<std::string> *entries, int *selected)
 {
-    return Menu(entries, selected,
-                {
-        .on_change =
-                });
+    return Menu(entries, selected, MenuOption::Horizontal());
 }
 
 MainWindow::MainWindow(size_t countTabulations)
