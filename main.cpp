@@ -31,7 +31,6 @@ int main(int argc, char* argv[]) {
                 break;
 
             case 'l':
-               std::string line;
                validateLog(std::cin);
                break;
 

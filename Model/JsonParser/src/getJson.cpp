@@ -7,8 +7,9 @@ json getJSON(std::string match_payload, smatch& match_json) {
         json j = json::parse(json_string);
         return j;
     }
-    json error_json;
-    error_json["empty"] = "json string is empty";
-    return error_json;
+    else {
+        json error_json;
+        error_json["empty"] = "json string is empty";
+        return error_json;
+    }
 }
-

@@ -11,5 +11,5 @@ using smatch = boost::smatch;
 
 json getJSON(std::string match_payload, smatch& match_json);
 
-#endif 
+#endif  //JSONUTILS_HPP
 
