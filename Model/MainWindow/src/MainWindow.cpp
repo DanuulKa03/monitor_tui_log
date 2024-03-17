@@ -41,15 +41,10 @@ void MainWindow::Run()
     auto input_key = Input(&key, "key entry field", {.on_change = filterOwner(key)});
 
     auto buttonExport = Button("Export", showModal(modal_shown));
-    auto buttonAdd = Button("Add",
-                            [&]
-                            {
 
-                            });
     auto containerButton = Container::Vertical({
                                                    input_key,
                                                    buttonExport,
-                                                   buttonAdd
                                                });
     auto leftContainer = Renderer(containerButton, [&]
     {
@@ -62,7 +57,6 @@ void MainWindow::Run()
 
                         separator(),
                         buttonExport->Render(),
-                        buttonAdd->Render(),
                     });
     });
 
@@ -140,11 +134,19 @@ std::function<void()> MainWindow::filterOwner(std::string &key)
 
         itemsWindow[selected_tab].containerLog->DetachAllChildren();
 
-        for (auto &it : itemsWindow[selected_tab].getBufferLogs()) {
-            if (key.compare(it.owner) == 0) {
+        if (key.empty()) //оставил условие, как мне кажется оно добавляет читабельность
+        {
+            for (auto &it : itemsWindow[selected_tab].getBufferLogs()) {
                 itemsWindow[selected_tab].appendLogToWindow(it);
             }
         }
-
+        else
+        {
+            for (auto &it : itemsWindow[selected_tab].getBufferLogs()) {
+                if (key.compare(it.owner) == 0) {
+                    itemsWindow[selected_tab].appendLogToWindow(it);
+                }
+            }
+        }
     };
 }
