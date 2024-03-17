@@ -59,10 +59,6 @@ add_library(Json
         Model/Json/include/mytoggle.hpp
 )
 
-add_library(JsonParser
-        Model/JsonParser/include/getJson.hpp
-        Model/JsonParser/src/getJson.cpp
-)
 
 add_library(LogValidator
         Model/LogValidator/include/LogValidator.hpp
@@ -74,7 +70,6 @@ target_include_directories(MainWindow PRIVATE Model/MainWindow/include)
 target_include_directories(MyCollapsible PRIVATE Model/MyCollapsible/include)
 target_include_directories(Json PRIVATE Model/Json/include)
 
-target_include_directories(JsonParser PRIVATE Model/JsonParser/include)
 target_include_directories(LogValidator PRIVATE Model/LogValidator/include)
 
 add_executable(${PROJECT_NAME} main.cpp)
@@ -101,9 +96,6 @@ target_link_libraries(MyCollapsible
         PRIVATE Json
 )
 
-target_link_libraries(LogValidator
-        PRIVATE JsonParser
-)
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE MainWindow
