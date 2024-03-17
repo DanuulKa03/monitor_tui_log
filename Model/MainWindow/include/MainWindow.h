@@ -7,7 +7,7 @@
 
 #include "../../TabController/include/TabController.hpp"
 #include "../../DialogComponent/include/DialogComponent.hpp"
-
+#include "../../HMenu/include/HMenu.hpp"
 
 class MainWindow
 {
@@ -34,7 +34,7 @@ private:
 
     std::function<void()> exportFile(); //экспорт файла
 
-    std::function<void()> filterOwner(std::string &key);
+    std::function<void()> filterOwner(std::string &key); //фильтр логов
 
     friend std::function<void()> handleMenuClick(MainWindow &win); // клик по кнопке меню
 

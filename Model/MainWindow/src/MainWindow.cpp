@@ -4,7 +4,6 @@
 #include "ftxui/component/component.hpp"  // for Renderer, ResizableSplitBottom, ResizableSplitLeft, ResizableSplitRight, ResizableSplitTop
 #include "ftxui/component/screen_interactive.hpp"  // for ScreenInteractive
 #include "ftxui/dom/elements.hpp"  // for Element, operator|, text, center, border
-#include "ftxui/screen/color.hpp"
 
 #include "MainWindow.h"
 
@@ -18,15 +17,6 @@ std::function<void()> handleMenuClick(MainWindow &win)
         win.key = win.itemsWindow[win.selected_tab].keyFilter; // нужно чтобы обновлялась строка input при переходе на новую закладку
 
     };
-}
-
-Component HMenu1(std::vector<std::string> *entries, int *selected, MainWindow &win)
-// возможно содание такой функции ошибка
-{
-    MenuOption opt =  MenuOption::Horizontal();
-    opt.on_change = handleMenuClick(win);
-
-    return Menu(entries, selected, opt);
 }
 
 MainWindow::MainWindow(size_t countTabulations)
@@ -93,7 +83,7 @@ void MainWindow::Run()
         &selected_tab);
 
     int size = 30;
-    auto tab_toggle = HMenu1(&tab_titles, &selected_tab, *this);
+    auto tab_toggle = HMenu(&tab_titles, &selected_tab, *this);
 
     auto layout = ResizableSplitLeft(leftContainer, tab, &size);
 
