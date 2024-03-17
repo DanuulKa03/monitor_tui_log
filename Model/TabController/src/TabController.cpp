@@ -90,22 +90,6 @@ bool TabController::appendLogToWindow(LogItem &item)
 
     return false;
 }
-
-std::function<void()> TabController::filterOwner(std::string &key)
-{
-    return [&]
-    {
-        containerLog->DetachAllChildren();
-
-        for (auto &it : bufferLogs) {
-            if (key.compare(it.owner) == 0) {
-                appendLogToWindow(it);
-            }
-
-        }
-
-    };
-}
 Component TabController::Inner(std::vector<Component> children)
 {
     Component vlist = Container::Vertical(std::move(children));
@@ -116,4 +100,8 @@ Component TabController::Inner(std::vector<Component> children)
                         vlist->Render(),
                     });
     });
+}
+boost::circular_buffer<LogItem> &TabController::getBufferLogs()
+{
+    return bufferLogs;
 }

@@ -26,9 +26,13 @@ class TabController
 public:
     TabController();
 
+    std::string keyFilter = "";
+
     Component containerLog = Container::Vertical({});; //окно логов программы
+
+    boost::circular_buffer<LogItem> &getBufferLogs();
+
     bool appendLogToWindow(LogItem &item);
-    std::function<void()> filterOwner(std::string &key);
 
 private:
     const int sizeCapacity = 100; //кол-во элементов в буфере
