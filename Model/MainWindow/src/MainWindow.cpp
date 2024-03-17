@@ -10,9 +10,23 @@
 
 using namespace ftxui;
 
-Component HMenu1(std::vector<std::string> *entries, int *selected)
+std::function<void()> handleMenuClick(MainWindow &win)
+// возможно содание такой функции ошибка
 {
-    return Menu(entries, selected, MenuOption::Horizontal());
+    return [&]
+    {
+        win.key = win.itemsWindow[win.selected_tab].keyFilter; // нужно чтобы обновлялась строка input при переходе на новую закладку
+
+    };
+}
+
+Component HMenu1(std::vector<std::string> *entries, int *selected, MainWindow &win)
+// возможно содание такой функции ошибка
+{
+    MenuOption opt =  MenuOption::Horizontal();
+    opt.on_change = handleMenuClick(win);
+
+    return Menu(entries, selected, opt);
 }
 
 MainWindow::MainWindow(size_t countTabulations)
@@ -34,12 +48,7 @@ void MainWindow::Run()
     std::string filePath; //путь до файла, который передается через диалоговое окно
     auto modal_component = DialogComponent(filePath, exportFile(), hideModal(modal_shown));
 
-    std::string key;
-    auto input_key = Input(&key, "key entry field",
-                           {
-                               //это обработка ввода текста
-                               .on_change = itemsWindow[selected_tab].filterOwner(key),
-                           });
+    auto input_key = Input(&key, "key entry field", {.on_change = filterOwner(key)});
 
     auto buttonExport = Button("Export", showModal(modal_shown));
     auto buttonAdd = Button("Add",
@@ -64,7 +73,7 @@ void MainWindow::Run()
                         separator(),
                         buttonExport->Render(),
                         buttonAdd->Render(),
-                    }) | flex_grow;
+                    });
     });
 
     // for Test
@@ -84,7 +93,7 @@ void MainWindow::Run()
         &selected_tab);
 
     int size = 30;
-    auto tab_toggle = HMenu1(&tab_titles, &selected_tab);
+    auto tab_toggle = HMenu1(&tab_titles, &selected_tab, *this);
 
     auto layout = ResizableSplitLeft(leftContainer, tab, &size);
 
@@ -132,10 +141,20 @@ std::function<void()> MainWindow::hideModal(bool &modal_shown)
         modal_shown = false;
     };
 }
-std::function<void()> MainWindow::handleMenuClick()
+std::function<void()> MainWindow::filterOwner(std::string &key)
 {
+    // так как мы знаем selected_tab очень удобно управлять обьектами
     return [&]
     {
+        itemsWindow[selected_tab].keyFilter = key; // для сохранения значения фильтра
+
+        itemsWindow[selected_tab].containerLog->DetachAllChildren();
+
+        for (auto &it : itemsWindow[selected_tab].getBufferLogs()) {
+            if (key.compare(it.owner) == 0) {
+                itemsWindow[selected_tab].appendLogToWindow(it);
+            }
+        }
 
     };
 }

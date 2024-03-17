@@ -18,6 +18,8 @@ public:
 private:
     std::string title_;
 
+    std::string key;
+
     //TODO по идеи, при запуске программы, мы можем посчитать сколько будет файлов или потоков и при
     // создании экземпляра класса сразу заполнить
 
@@ -32,7 +34,9 @@ private:
 
     std::function<void()> exportFile(); //экспорт файла
 
-    std::function<void()> handleMenuClick(); //клик по меню
+    std::function<void()> filterOwner(std::string &key);
+
+    friend std::function<void()> handleMenuClick(MainWindow &win); // клик по кнопке меню
 
 };
 
