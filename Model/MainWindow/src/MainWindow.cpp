@@ -4,104 +4,98 @@
 #include "ftxui/component/component.hpp"  // for Renderer, ResizableSplitBottom, ResizableSplitLeft, ResizableSplitRight, ResizableSplitTop
 #include "ftxui/component/screen_interactive.hpp"  // for ScreenInteractive
 #include "ftxui/dom/elements.hpp"  // for Element, operator|, text, center, border
-#include "ftxui/screen/color.hpp"
 
 #include "MainWindow.h"
 
-#include <nlohmann/json.hpp>
-using JSON = nlohmann::json;
-
 using namespace ftxui;
 
-Component Inner(std::vector<Component> children) {
-    Component vlist = Container::Vertical(std::move(children));
-    return Renderer(vlist, [vlist] {
-        return hbox({
-                            text(" "),
-                            vlist->Render(),
-                    });
-    });
+std::function<void()> handleMenuClick(MainWindow &win)
+// возможно содание такой функции ошибка
+{
+    return [&]
+    {
+        win.key = win.itemsWindow[win.selected_tab].keyFilter; // нужно чтобы обновлялась строка input при переходе на новую закладку
+
+    };
 }
 
-MainWindow::MainWindow() : title_("Monitor log") {
-    bufferLogs.set_capacity(sizeCapacity);
+MainWindow::MainWindow(size_t countTabulations)
+    : title_("Monitor log")
+{
+    for (size_t i = 0; i < countTabulations; i++) {
+        tab_titles.push_back("Tab " + std::to_string(i + 1));
+        itemsWindow.push_back(TabController());
+    }
 }
 
-void MainWindow::Run() {
+void MainWindow::Run()
+{
 
     auto screen = ScreenInteractive::Fullscreen();
 
-    bool modal_shown = false;
+    // Instanciate the main and modal components:
+    bool modal_shown = false; //отображается ли окно или нет
     std::string filePath; //путь до файла, который передается через диалоговое окно
+    auto modal_component = DialogComponent(filePath, exportFile(), hideModal(modal_shown));
 
-    // Some actions modifying the state:
-    auto show_modal = [&] { modal_shown = true; };
-    auto hide_modal = [&] { modal_shown = false; };
+    auto input_key = Input(&key, "key entry field", {.on_change = filterOwner(key)});
 
-    std::string key;
-    auto input_key = Input(&key, "key entry field");
-
-    auto buttonExport = Button("Export",show_modal);
-
-    // for Test
-    containerLog = Container::Vertical({});
-
-    auto textarea = Renderer(containerLog, [&]{
-        return hflow({
-                             containerLog->Render() | vscroll_indicator | yframe,
-                    });
-    });
-    auto buttonAdd = Button("Add",
-                            [&]{
-        LogItem log1("[2024-02-05 18:36:54]", "Debug", "Mqtt", "Published message of size 178 to topic customer/1/dev/394/v70");
-        LogItem log2("[2024-02-05 18:36:54]", "Critical", "Mqtt", "Published message of size 178 to topic customer/1/dev/394/v70", {
-                {"Adviser::onTelemetryUpdated(const QString&) const@adviser.cpp:248", PayloadType::code}});
-        LogItem log3("[2024-02-05 18:36:54]", "Warning", "Mqtt", "Message to enqueue",{
-            {"{\"course\":\"0\",\"gps_quality\":\"1.46\",\"gps_time\":\"183651\",\"hdop\":\"1.46\",\"height\":\"112.1\",\"lat\":\"51.310804\",\"lon\":\"40.504654\",\"satelite_count\":\"8\",\"speed\":\"1.029712\",\"time\":\"1707158212622\",\"x_acceleration\":\"0\",\"x_vibration_amplitude\":\"0\",\"x_vibration_frequency\":\"0\",\"x_vibration_speed\":\"0\",\"y_acceleration\":\"0\",\"y_vibration_amplitude\":\"0\",\"y_vibration_speed\":\"0\",\"z_acceleration\":\"0\",\"z_vibration_amplitude\":\"0\",\"z_vibration_frequency\":\"0\",\"z_vibration_speed\":\"0\"}", PayloadType::json},
-            {"size: 460, schema_id: 70",PayloadType::text}
-        });
-
-        appendLogToWindow(log1);
-        appendLogToWindow(log2);
-        appendLogToWindow(log3);
-
-    });
+    auto buttonExport = Button("Export", showModal(modal_shown));
 
     auto containerButton = Container::Vertical({
-        input_key,
-        buttonExport,
-        buttonAdd
-    });
-
-    auto features = Renderer(containerButton, [&]{
+                                                   input_key,
+                                                   buttonExport,
+                                               });
+    auto leftContainer = Renderer(containerButton, [&]
+    {
         return vbox({
 
-            hbox({
-                text("key : "),
-                input_key->Render()
-            }),
+                        hbox({
+                                 text("key : "),
+                                 input_key->Render()
+                             }),
 
-            separator() ,
-            buttonExport->Render(),
-            buttonAdd->Render(),
-        });
+                        separator(),
+                        buttonExport->Render(),
+                    });
     });
+
+    // for Test
+    auto bla1 = Renderer(itemsWindow[0].containerLog, [&]
+    { return hflow({itemsWindow[0].containerLog->Render() | vscroll_indicator | yframe | xflex,}); });
+    auto bla2 = Renderer(itemsWindow[1].containerLog, [&]
+    { return hflow({itemsWindow[1].containerLog->Render() | vscroll_indicator | yframe | xflex,}); });
+    auto bla3 = Renderer(itemsWindow[2].containerLog, [&]
+    { return hflow({itemsWindow[2].containerLog->Render() | vscroll_indicator | yframe | xflex,}); });
+
+    auto tab = Container::Tab(
+        {
+            bla1,
+            bla2,
+            bla3,
+        },
+        &selected_tab);
 
     int size = 30;
-    auto layout = ResizableSplitLeft(features, textarea, &size);
+    auto tab_toggle = HMenu(&tab_titles, &selected_tab, *this);
 
-    auto component = Renderer(layout, [&] {
+    auto layout = ResizableSplitLeft(leftContainer, tab, &size);
+
+    auto containerMain = Container::Vertical({
+                                                 tab_toggle,
+                                                 layout,
+                                             });
+
+    //TODO !!! Сделать нормальное разбиение на функции по примеру menu_style.cpp
+
+    auto component = Renderer(containerMain, [&]
+    {
         return vbox({
-            text("Top"),
-            separator(),
-            layout->Render() | flex,
-            })| border;
-    }) ;
-
-    auto do_nothing = [&] {};
-
-    // Instanciate the main and modal components:
-    auto modal_component = DialogComponent(filePath, do_nothing, hide_modal);
+                        tab_toggle->Render(),
+                        separator(),
+                        layout->Render() | flex,
+                    }) | border;
+    });
 
     component |= Modal(modal_component, &modal_shown);
 
@@ -109,58 +103,50 @@ void MainWindow::Run() {
 
 }
 
-bool MainWindow::appendLogToWindow(LogItem& item) {
-    this->bufferLogs.push_back(item);
+// Это обработчкик событий сохранения файла
+std::function<void()> MainWindow::exportFile()
+{
+    return [&]
+    {
 
-    std::vector<Component> children;
-    for (auto& it: item.payloadVector) {
+    };
+}
+std::function<void()> MainWindow::showModal(bool &modal_shown)
+{
+    return [&]
+    {
+        modal_shown = true;
+    };
+}
+std::function<void()> MainWindow::hideModal(bool &modal_shown)
+{
+    return [&]
+    {
+        modal_shown = false;
+    };
+}
+std::function<void()> MainWindow::filterOwner(std::string &key)
+{
+    // так как мы знаем selected_tab очень удобно управлять обьектами
+    return [&]
+    {
+        itemsWindow[selected_tab].keyFilter = key; // для сохранения значения фильтра
 
-        switch (it.second) {
-            case PayloadType::text:
+        itemsWindow[selected_tab].containerLog->DetachAllChildren();
 
-                children.push_back(Renderer([it] { return paragraph(it.first); }));
-
-                break;
-            case PayloadType::json:
-            {
-                JSON json;
-                if (ParseJSON(it.first,json))
-                {
-                    Expander expander = ExpanderImpl::Root();
-                    auto json_test = From(json, /*is_last=*/true, /*depth=*/0, expander);
-
-                    // Wrap it inside a frame, to allow scrolling.
-                    json_test =
-                            Renderer(json_test, [json_test] { return json_test->Render() | yframe; });
-
-                    children.push_back(json_test);
-                }
-                else
-                {
-                    // TODO нужно сделать обрабтку ошибок
-                }
-
-                break;
+        if (key.empty()) //оставил условие, как мне кажется оно добавляет читабельность
+        {
+            for (auto &it : itemsWindow[selected_tab].getBufferLogs()) {
+                itemsWindow[selected_tab].appendLogToWindow(it);
             }
-            case PayloadType::code:
-
-                children.push_back(Renderer([it] { return text(it.first) | bgcolor(Color::Yellow); }));
-
-                break;
         }
-    }
-
-    if (!children.empty())
-    {
-        this->containerLog->Add(MyCollapsible(item, Inner(children)));
-    }
-    else
-    {
-        this->containerLog->Add(MyCollapsible(item));
-    }
-
-
-
-
-    return false;
+        else
+        {
+            for (auto &it : itemsWindow[selected_tab].getBufferLogs()) {
+                if (key.compare(it.owner) == 0) {
+                    itemsWindow[selected_tab].appendLogToWindow(it);
+                }
+            }
+        }
+    };
 }

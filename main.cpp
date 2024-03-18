@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
     std::ifstream in;
     bool read_from_file = false;
 
-    MainWindow app;
+    MainWindow app(3);
    // app.Run();
 
     while ((prog_opt = getopt(argc, argv, "f:l")) != -1) {
@@ -40,7 +40,6 @@ int main(int argc, char* argv[]) {
         }
         
     }
-
 
     return 0;
 }

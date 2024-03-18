@@ -6,14 +6,17 @@ include(FetchContent)
 
 set(CMAKE_CXX_STANDARD 17)
 set(FETCHCONTENT_UPDATES_DISCONNECTED TRUE)
+set(BOOST_ENABLE_CMAKE ON)
 
 FetchContent_Declare(ftxui
- GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
- GIT_TAG main # Important: Specify a version or a commit hash here.
+        GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
+        GIT_TAG main # Important: Specify a version or a commit hash here.
 )
 
 FetchContent_Declare(Boost
-        URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
+        GIT_REPOSITORY https://github.com/boostorg/boost.git
+        GIT_TAG boost-1.84.0
+        GIT_SHALLOW TRUE
 )
 
 FetchContent_Declare(json
@@ -59,16 +62,27 @@ add_library(Json
         Model/Json/include/mytoggle.hpp
 )
 
-
 add_library(LogValidator
         Model/LogValidator/include/LogValidator.hpp
         Model/LogValidator/src/LogValidator.cpp
+)
+
+add_library(TabController
+        Model/TabController/src/TabController.cpp
+        Model/TabController/include/TabController.hpp
+)
+
+add_library(HMenu
+        Model/HMenu/src/HMenu.cpp
+        Model/HMenu/include/HMenu.hpp
 )
 
 target_include_directories(DialogComponent PRIVATE Model/DialogComponent/include)
 target_include_directories(MainWindow PRIVATE Model/MainWindow/include)
 target_include_directories(MyCollapsible PRIVATE Model/MyCollapsible/include)
 target_include_directories(Json PRIVATE Model/Json/include)
+target_include_directories(TabController PRIVATE Model/TabController/include)
+target_include_directories(HMenu PRIVATE Model/HMenu/include)
 
 target_include_directories(LogValidator PRIVATE Model/LogValidator/include)
 
@@ -87,19 +101,29 @@ target_link_libraries(Json
 )
 
 target_link_libraries(MainWindow
-        PUBLIC LogItem
         PUBLIC nlohmann_json::nlohmann_json
+        PUBLIC HMenu
+        PUBLIC TabController
         PUBLIC DialogComponent
 )
 
 target_link_libraries(MyCollapsible
-        PRIVATE Json
+        PUBLIC Json
+)
+
+target_link_libraries(TabController
+        PUBLIC Boost::circular_buffer
+        PRIVATE ftxui::dom
+        PRIVATE ftxui::component
+        PRIVATE LogItem
+        PRIVATE MyCollapsible
+)
+
+target_link_libraries(HMenu
+        PUBLIC MainWindow
 )
 
 
 target_link_libraries(${PROJECT_NAME}
-        PRIVATE MainWindow
-        PRIVATE MyCollapsible
-        PRIVATE LogValidator
+        PUBLIC MainWindow
 )
-
