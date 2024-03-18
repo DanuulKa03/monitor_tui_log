@@ -1,5 +1,5 @@
 #include "../include/LogValidator.hpp"
-#include "../../JsonParser/include/getJson.hpp"
+
 
 void validateLog(std::istream& in){
     std::string line;
@@ -31,6 +31,7 @@ void validateLog(std::istream& in){
 			}
 
 			if(!j.empty()  &&  j.contains("empty")){
+                  GetLog(match_datetime[0], match_firmware[0], match_owner[0], match_payload);
 				  std::cout << "USEFUL PART1: " << match_datetime[0]
 				  << match_firmware[0] << match_owner[0]
 				  << match_payload << std::endl;
@@ -47,4 +48,11 @@ void validateLog(std::istream& in){
 	}
 }
 
-
+LogItem GetLog(std::string s_datatime, std::string s_firmware, std::string s_owner, std::string s_payload){
+    LogItem item;
+    item.date_time = s_datatime;
+    item.firmware = s_firmware;
+    item.owner = s_owner;
+    item.payloadVector.push_back(std::make_pair(s_payload, PayloadType::text));
+    return item;
+}
