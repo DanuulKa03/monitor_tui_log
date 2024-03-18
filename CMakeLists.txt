@@ -13,6 +13,9 @@ FetchContent_Declare(ftxui
         GIT_TAG main # Important: Specify a version or a commit hash here.
 )
 
+#TODO разобаться с boost https://github.com/alandefreitas/FetchBoostContent/blob/develop/CMakeLists.txt
+#TODO https://alandefreitas.github.io/FetchBoostContent/proposals/
+
 if(NOT Boost_FOUND)
     message(WARNING "Boost not found. Fetching Boost from GitHub...")
     FetchContent_Declare(
