@@ -13,11 +13,18 @@ FetchContent_Declare(ftxui
         GIT_TAG main # Important: Specify a version or a commit hash here.
 )
 
-FetchContent_Declare(Boost
-        GIT_REPOSITORY https://github.com/boostorg/boost.git
-        GIT_TAG boost-1.84.0
-        GIT_SHALLOW TRUE
-)
+if(NOT Boost_FOUND)
+    message(WARNING "Boost not found. Fetching Boost from GitHub...")
+    FetchContent_Declare(
+            Boost
+            GIT_REPOSITORY https://github.com/boostorg/boost.git
+            GIT_TAG boost-1.84.0
+            GIT_SHALLOW TRUE
+    )
+    FetchContent_MakeAvailable(Boost)
+endif()
+
+find_package(Boost 1.84 QUIET)
 
 FetchContent_Declare(json
         URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz
@@ -30,7 +37,6 @@ if(NOT json_POPULATED)
 endif()
 
 FetchContent_MakeAvailable(ftxui)
-FetchContent_MakeAvailable(Boost)
 
 add_library(DialogComponent
         Model/DialogComponent/src/DialogComponent.cpp
