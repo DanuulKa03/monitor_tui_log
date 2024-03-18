@@ -27,13 +27,35 @@ TabController::TabController()
                      {"size: 460, schema_id: 70", PayloadType::text}
                  });
 
+    LogItem log4("[2024-02-05 18:37:00]", "Info", "Gps",
+                 "Received TXT payload: '$GNTXT,01,01,01,More than 100 frame errors, UART RX was disabled*70'");
+
+    LogItem log5("[2024-02-05 18:37:00]", "Info", "Messenger",
+                 "18563 messages sent in total, 1 during last transaction");
+
+    LogItem log6("[2024-02-05 18:36:54]",
+                 "Warning",
+                 "Adviser",
+                 "Can't find nearest edge, current_speed: 0, recommended speed: 0 km/h",
+                 {
+                     {"void Adviser::onTelemetryUpdated(const QString&) const@adviser.cpp:248",
+                      PayloadType::code}
+                 });
+
     this->bufferLogs.push_back(std::move(log1));
     this->bufferLogs.push_back(std::move(log2));
     this->bufferLogs.push_back(std::move(log3));
+    this->bufferLogs.push_back(std::move(log4));
+    this->bufferLogs.push_back(std::move(log5));
+    this->bufferLogs.push_back(std::move(log6));
+
 
     appendLogToWindow(bufferLogs[0]);
     appendLogToWindow(bufferLogs[1]);
     appendLogToWindow(bufferLogs[2]);
+    appendLogToWindow(bufferLogs[3]);
+    appendLogToWindow(bufferLogs[4]);
+    appendLogToWindow(bufferLogs[5]);
 
 }
 
