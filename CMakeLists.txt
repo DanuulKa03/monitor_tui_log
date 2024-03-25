@@ -63,6 +63,11 @@ add_library(Json
         Model/Json/include/mytoggle.hpp
 )
 
+add_library(LogValidator
+        Model/LogValidator/include/LogValidator.hpp
+        Model/LogValidator/src/LogValidator.cpp
+)
+
 add_library(TabController
         Model/TabController/src/TabController.cpp
         Model/TabController/include/TabController.hpp
@@ -71,7 +76,6 @@ add_library(TabController
 add_library(HMenu
         Model/HMenu/src/HMenu.cpp
         Model/HMenu/include/HMenu.hpp
-
 )
 
 target_include_directories(DialogComponent PRIVATE Model/DialogComponent/include)
@@ -80,6 +84,8 @@ target_include_directories(MyCollapsible PRIVATE Model/MyCollapsible/include)
 target_include_directories(Json PRIVATE Model/Json/include)
 target_include_directories(TabController PRIVATE Model/TabController/include)
 target_include_directories(HMenu PRIVATE Model/HMenu/include)
+
+target_include_directories(LogValidator PRIVATE Model/LogValidator/include)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
@@ -118,7 +124,8 @@ target_link_libraries(HMenu
         PUBLIC MainWindow
 )
 
+
 target_link_libraries(${PROJECT_NAME}
         PUBLIC MainWindow
-
+        PRIVATE LogValidator
 )

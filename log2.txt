@@ -1,0 +1,31 @@
+[2024-03-06 14:55:09] (Firmware:Debug) DBClient: Creating 'can_bus_configs' table
+[2024-03-06 14:55:09] (Firmware:Debug) DBClient: Creating 'device_configs' table
+[2024-03-06 14:55:09] (Firmware:Debug) DBClient: Creating 'messages' table
+[2024-03-06 14:55:09] (Firmware:Debug) DBClient: Creating 'ports_uartconfig' table
+[2024-03-06 14:55:09] (Firmware:Debug) DBClient: Creating 'sensor_tag_can_configs' table
+[2024-03-06 14:55:09] (Firmware:Debug) DBClient: Creating 'sensor_tags_sensortaguartconfig' table
+[2024-03-06 14:55:09] (Firmware:Debug) [Firmware:TRACE] ConfigManager: Latest device config id is: 74
+
+[2024-03-06 14:55:09] (Firmware:Debug) ConfigManager: Fetching CAN bus configs for device config with id: 74
+[2024-03-06 14:55:09] (Firmware:Debug) ConfigManager: Fetching tag configs for bus with id: 70
+[2024-03-06 14:55:09] (Firmware:Debug) ConfigManager: Fetching RS bus configs for device config with id: 74
+[2024-03-06 14:55:09] (Firmware:Warning) ConfigManager: Exception thrown (ignoring): Sql query: 'SELECT * FROM ports_uartconfig WHERE (device_config_id = :devconid)' bad value error:   (/firmware/Model/DBClient/src/dbclient.cpp:101) (QVector<ConfigManager::rs_bus_config_s> ConfigManager::fetchRSBusConfig_(int32_t, ConfigManager::data_fetch_policy_e) const@configmanager.cpp:212)
+[2024-03-06 14:55:09] (Firmware:Debug) Controller: read from config file: (JLF68Z87PCN2, https://nginx.piklema.com, Firmware_0.26.1.0-bdacc990.tar.gz)
+[2024-03-06 14:55:09] (Firmware:Debug) ConfigManager: Saving new device config
+[2024-03-06 14:55:10] (Firmware:Critical) Controller: No suitable device config, can't start (int32_t Controller::start()@controller.cpp:378)
+[2024-03-06 14:55:10] (Firmware:Warning) qrc:/main.qml:36:5: QML InformationPanel: Binding loop detected for property "locale"
+[2024-03-06 14:55:10] (Firmware:Warning) qrc:/main.qml:36:5: QML InformationPanel: Binding loop detected for property "locale"
+[2024-03-06 14:55:10] (Firmware:Debug) DateTime:  There is no "Etc/GMT+5" timezone in the list
+[2024-03-06 14:55:15] (Firmware:Warning) HttpController: request timeout occured, aborting (HttpController::registration(const QString&, const QString&)::<lambda()>@httpcontroller.cpp:358)
+[2024-03-06 14:55:15] (Firmware:Fatal) ERROR registration: 'Операция отменена' (httpcontroller_status_code_e HttpController::processRegistrationFinished(QNetworkReply*)@httpcontroller.cpp:405)
+Aborted (core dumped)
+[2024-03-13 08:35:18] (Firmware:Debug) HttpClient: Making POST request: https://dev-nginx.piklema.com//api/v1/devices, ({"name":"device_vht_10_1_3C:6A:2C:D3:B1:26"})
+
+Mar 13 08:35:19 imx8 PiklemaLauncher[529309]: [2024-03-13 08:35:19] (Firmware:Debug) HttpClient: Got headers: '{"allow":"GET, POST, HEAD, OPTIONS","ci-service-version":"new","ci-service-version-example":"Valid values for ci-service-version header are: old, new, internal-old, internal-new","content-language":"ru","content-length":"101","content-type":"application/json","cross-origin-opener-policy":"same-origin","date":"Wed, 13 Mar 2024 08:35:19 GMT","referrer-policy":"same-origin","server":"istio-envoy","vary":"Accept, Accept-Language, Cookie, Origin","x-content-type-options":"nosniff","x-envoy-upstream-service-time":"33","x-frame-options":"SAMEORIGIN","x-request-id":"97bbfcc7-ba34-4823-9f9f-c95e5d50ff88"}'
+Mar 13 08:35:19 imx8 PiklemaLauncher[529309]: [2024-03-13 08:35:19] (Firmware:Debug) HttpClient: Got reply 400 ({"name":["Устройство с таким именем уже зарегистрировано!"]})
+Mar 13 08:35:19 imx8 PiklemaLauncher[529309]: [2024-03-13 08:35:19] (Firmware:Warning) HttpClient: request '400' error, status: 400 (HttpClient::makeRequest<Controller::registerDevice()::<lambda(const QByteArray&)>, const char*, QByteArray, const char*>(request_type_e, const QString&, Controller::registerDevice()::<lambda(const QByteArray&)>&&, QStringList&&, std::tuple<const char*, QByteArray, const char*>&&, const QByteArray&)::<lambda(QNetworkReply*)>@httpclient.h:36)
+[2024-02-12 09:57:22] (Firmware:Info) New message received: '{"created_time": "09:57", "data": {"data": {"statistics": {"rating": 7, "cycle_count": 7, "kpi_percent": 77, "truck_state": 7, "total_distance_hauling": 70}}, "created_time": "16:11"}}'
+[2024-02-12 09:57:22] (Firmware:Debug) ************************** QJsonObject({"created_time":"09:57","data":{"created_time":"16:11","data":{"statistics":{"cycle_count":7,"kpi_percent":77,"rating":7,"total_distance_hauling":70,"truck_state":7}}}})
+[2024-02-12 09:57:22] (Firmware:Debug) ************************** QJsonObject({"created_time":"16:11","data":{"statistics":{"cycle_count":7,"kpi_percent":77,"rating":7,"total_distance_hauling":70,"truck_state":7}}})
+QString::arg: 3 argument(s) missing in
+
