@@ -132,4 +132,5 @@ target_link_libraries(HMenu
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC MainWindow
+        PRIVATE LogValidator
 )

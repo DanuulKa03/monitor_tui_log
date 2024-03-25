@@ -13,6 +13,8 @@ using smatch = boost::smatch;
 
 void validateLog(std::istream& in);
 
-LogItem GetLog(std::string s_datatime, std::string s_firmware, std::string s_owner, std::string s_payload);
+LogItem GetLog(std::string date_time, std::string firmware, std::string owner, std::string payload, PayloadType type);
+
+bool isCode(const std::string& payload_str);
 
 #endif // LOGVALIDATOR_HPP

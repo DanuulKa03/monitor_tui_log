@@ -1,6 +1,32 @@
 #include "../include/LogValidator.hpp"
 
 
+LogItem GetLog(std::string date_time, std::string firmware, std::string owner, std::string payload, PayloadType type){
+
+    std::vector<std::pair<std::string, PayloadType>> payloadVector;
+    switch(type) {
+        case PayloadType::text:
+            payloadVector.push_back(std::make_pair(payload, PayloadType::text));
+        break;
+        case PayloadType::json:
+            payloadVector.push_back(std::make_pair(payload, PayloadType::json));
+        break;
+        case PayloadType::code:
+            payloadVector.push_back(std::make_pair(payload, PayloadType::code));
+        break;
+    }      
+
+    LogItem item(date_time, firmware, owner, payload, payloadVector);
+    return item;
+}
+
+bool isCode(const std::string& payload_str) {
+    boost::regex code_pattern("(cpp|h):(\\d+)");
+
+    boost::smatch matches;
+    return boost::regex_search(payload_str, matches, code_pattern);
+}
+
 void validateLog(std::istream& in){
     std::string line;
 	regex datetime_pattern("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] ");
@@ -31,28 +57,27 @@ void validateLog(std::istream& in){
 			}
 
 			if(!j.empty()  &&  j.contains("empty")){
-                  GetLog(match_datetime[0], match_firmware[0], match_owner[0], match_payload);
-				  std::cout << "USEFUL PART1: " << match_datetime[0]
+                if (isCode(match_payload))
+                  GetLog(match_datetime[0], match_firmware[0], match_owner[0], match_payload,PayloadType::code);
+                else    
+                  GetLog(match_datetime[0], match_firmware[0], match_owner[0], match_payload,PayloadType::text);
+				/*  std::cout << "USEFUL PART1: " << match_datetime[0]
 				  << match_firmware[0] << match_owner[0]
-				  << match_payload << std::endl;
+				  << match_payload << std::endl;*/
 
 			}
 
 			else{
-			std::cout << "USEFUL PART2: " << match_datetime[0]
+                
+                GetLog(match_datetime[0], match_firmware[0], match_owner[0], match_payload,PayloadType::json);
+		/*	std::cout << "USEFUL PART2: " << match_datetime[0]
 				  << match_firmware[0] << match_owner[0]
 				  << match_json.prefix() << std::setw(4) << j
-				  << match_json.suffix() << std::endl;
+				  << match_json.suffix() << std::endl;*/
 			}
 		}
 	}
 }
 
-LogItem GetLog(std::string s_datatime, std::string s_firmware, std::string s_owner, std::string s_payload){
-    LogItem item;
-    item.date_time = s_datatime;
-    item.firmware = s_firmware;
-    item.owner = s_owner;
-    item.payloadVector.push_back(std::make_pair(s_payload, PayloadType::text));
-    return item;
-}
+
+
