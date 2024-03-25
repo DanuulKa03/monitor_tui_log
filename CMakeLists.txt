@@ -16,18 +16,9 @@ FetchContent_Declare(ftxui
 #TODO разобаться с boost https://github.com/alandefreitas/FetchBoostContent/blob/develop/CMakeLists.txt
 #TODO https://alandefreitas.github.io/FetchBoostContent/proposals/
 
-if(NOT Boost_FOUND)
-    message(WARNING "Boost not found. Fetching Boost from GitHub...")
-    FetchContent_Declare(
-            Boost
-            GIT_REPOSITORY https://github.com/boostorg/boost.git
-            GIT_TAG boost-1.84.0
-            GIT_SHALLOW TRUE
-    )
-    FetchContent_MakeAvailable(Boost)
-endif()
-
-find_package(Boost 1.84 QUIET)
+FetchContent_Declare(Boost
+        URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
+)
 
 FetchContent_Declare(json
         URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz
@@ -40,6 +31,7 @@ if(NOT json_POPULATED)
 endif()
 
 FetchContent_MakeAvailable(ftxui)
+FetchContent_MakeAvailable(Boost)
 
 add_library(DialogComponent
         Model/DialogComponent/src/DialogComponent.cpp
