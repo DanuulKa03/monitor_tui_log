@@ -26,7 +26,22 @@ class TabController
 public:
     TabController();
 
-    std::string keyFilter = "";
+    // Копирующий конструктор
+    TabController(const TabController& other) {
+        keyFilter = other.keyFilter;
+        containerLog = other.containerLog;
+        bufferLogs = other.bufferLogs;
+    }
+
+    // Оператор присваивания
+    TabController& operator=(TabController other) {
+        // Обмен значений текущего объекта и объекта, переданного в параметре,
+        // с использованием копирующего конструктора
+        std::swap(*this, other);
+        return *this;
+    }
+
+    std::string keyFilter;
 
     Component containerLog = Container::Vertical({});; //окно логов программы
 
@@ -37,7 +52,7 @@ public:
 private:
     const int sizeCapacity = 100; //кол-во элементов в буфере
 
-    boost::circular_buffer<LogItem> bufferLogs; //кольцевой буфер в котором храняться логи
-    Component Inner(std::vector<Component> children);
+    boost::circular_buffer<LogItem> bufferLogs; //кольцевой буфер в котором хранятся логи
+    static Component Inner(std::vector<Component> children);
 };
 #endif //TABCONTROLLER_HPP
