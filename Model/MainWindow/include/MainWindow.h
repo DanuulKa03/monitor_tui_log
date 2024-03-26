@@ -15,6 +15,8 @@ public:
     //TODO Написать класс, который будет принимать число логов в конструкторе и обрабатывать это
     MainWindow(size_t countTabulations);
     void Run();
+
+    std::vector<TabController> &getItemsWindow() {return itemsWindow;}
 private:
     std::string title_;
 
