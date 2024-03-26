@@ -24,6 +24,13 @@ Component MyCollapsible(const LogItem& item, Component child, Ref<bool> show) {
                     prefix |= color(Color::Red);
                 }
 
+                if (s.active) {
+                    date_time |= bold;
+                }
+                if (s.focused) {
+                    date_time |= inverted;
+                }
+
                 auto threeDots = paragraph(s.state ? s.label : "{...}");
 
                 return hbox({prefix, text(" "), date_time, text(" "), firmware, text(" "),
@@ -57,6 +64,13 @@ Component MyCollapsible(const LogItem &item, Ref<bool> show) {
                 } else if (item.firmware == "Critical" || item.firmware == "Fatal") {
                     firmware |= color(Color::Red);
                     prefix |= color(Color::Red);
+                }
+
+                if (s.active) {
+                    date_time |= bold;
+                }
+                if (s.focused) {
+                    date_time |= inverted;
                 }
 
                 auto threeDots = paragraph(s.state ? s.label : "{...}");
