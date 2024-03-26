@@ -14,7 +14,6 @@ int main(int argc, char* argv[]) {
     bool read_from_file = false;
 
     MainWindow app(3);
-   // app.Run();
 
     while ((prog_opt = getopt(argc, argv, "f:l")) != -1) {
         switch (prog_opt) {
@@ -25,22 +24,23 @@ int main(int argc, char* argv[]) {
                     std::cerr << "Error: Could not open file: " << filename << std::endl;
                     return 1;
                 }
-				
-				validateLog(in);
+
+                validateLog(in, app.getItemsWindow()[0].getBufferLogs());
                 in.close();
                 break;
 
             case 'l':
-               validateLog(std::cin);
-               break;
+                validateLog(std::cin, app.getItemsWindow()[0].getBufferLogs());
+                break;
 
             default:
                 std::cerr << "Usage: " << argv[0] << " [-f|--file filename or [-l]--live " << std::endl;
                 return 1;
         }
-        
+
     }
 
+    app.Run();
     return 0;
 }
 
