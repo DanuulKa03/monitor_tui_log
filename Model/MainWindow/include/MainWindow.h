@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <type_traits>
 
 #include "../../TabController/include/TabController.hpp"
 #include "../../DialogComponent/include/DialogComponent.hpp"
@@ -13,11 +14,13 @@ class MainWindow
 {
 public:
     //TODO Написать класс, который будет принимать число логов в конструкторе и обрабатывать это
-    MainWindow(size_t countTabulations);
+    explicit MainWindow(size_t countTabulations_);
     void Run();
 
     std::vector<TabController> &getItemsWindow() {return itemsWindow;}
 private:
+    const size_t countTabulations;
+
     std::string title_;
 
     std::string key;
@@ -30,13 +33,13 @@ private:
 
     std::vector<TabController> itemsWindow; //окна вкладок
 
-    std::function<void()> showModal(bool &modal_shown); //вкл. окна
+    static std::function<void()> showModal(bool &modal_shown); //вкл. окна
 
-    std::function<void()> hideModal(bool &modal_shown); //выкл. окна
+    static std::function<void()> hideModal(bool &modal_shown); //выкл. окна
 
-    std::function<void()> exportFile(); //экспорт файла
+    static std::function<void()> exportFile(); //экспорт файла
 
-    std::function<void()> filterOwner(std::string &key); //фильтр логов
+    std::function<void()> filterOwner(); //фильтр логов
 
     friend std::function<void()> handleMenuClick(MainWindow &win); // клик по кнопке меню
 

@@ -44,7 +44,7 @@ Component MyCollapsible(const LogItem& item, Component child, Ref<bool> show) {
         Ref<bool> show_;
     };
 
-    return Make<Impl>(std::move(item), std::move(child), show);
+    return Make<Impl>(item, std::move(child), show);
 }
 
 Component MyCollapsible(const LogItem &item, Ref<bool> show) {
@@ -85,5 +85,5 @@ Component MyCollapsible(const LogItem &item, Ref<bool> show) {
         Ref<bool> show_;
     };
 
-    return Make<Impl>(std::move(item), show);
+    return Make<Impl>(item, show);
 }
