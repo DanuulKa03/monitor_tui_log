@@ -1,1 +1,12 @@
-# piklemamonitorlog
+# monitorlog
+
+## Устновка
+Достаточно просто скачать репозиторий, CMake сам установит все необходимые библиотеки.
+
+## Запуск
+    Флаги:
+    [-f|--file filename or [-l]--live
+
+    Пример запуска
+
+    log_monitor -f log.txt
