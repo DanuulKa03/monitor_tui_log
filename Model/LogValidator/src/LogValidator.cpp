@@ -27,7 +27,7 @@ bool isCode(const std::string& payload_str) {
     return boost::regex_search(payload_str, matches, code_pattern);
 }
 
-void validateLog(std::istream& in){
+void validateLog(std::istream& in, boost::circular_buffer<LogItem> &bufferLogs){
     std::string line;
 	regex datetime_pattern("\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] ");
 	regex firmware_pattern("\\(Firmware:(Info|Debug|Warning|Critical|Fatal)\\) ");
@@ -58,9 +58,11 @@ void validateLog(std::istream& in){
 
 			if(!j.empty()  &&  j.contains("empty")){
                 if (isCode(match_payload))
-                  GetLog(match_datetime[0], match_firmware[0], match_owner[0], match_payload,PayloadType::code);
-                else    
-                  GetLog(match_datetime[0], match_firmware[0], match_owner[0], match_payload,PayloadType::text);
+                    bufferLogs.push_back(GetLog(match_datetime[0], match_firmware[0],
+                                                match_owner[0],match_payload,PayloadType::code));
+                else
+                    bufferLogs.push_back(GetLog(match_datetime[0], match_firmware[0],
+                        match_owner[0], match_payload,PayloadType::text));
 				/*  std::cout << "USEFUL PART1: " << match_datetime[0]
 				  << match_firmware[0] << match_owner[0]
 				  << match_payload << std::endl;*/
@@ -68,8 +70,8 @@ void validateLog(std::istream& in){
 			}
 
 			else{
-                
-                GetLog(match_datetime[0], match_firmware[0], match_owner[0], match_payload,PayloadType::json);
+                bufferLogs.push_back(GetLog(match_datetime[0], match_firmware[0],
+                    match_owner[0], match_payload,PayloadType::json));
 		/*	std::cout << "USEFUL PART2: " << match_datetime[0]
 				  << match_firmware[0] << match_owner[0]
 				  << match_json.prefix() << std::setw(4) << j
