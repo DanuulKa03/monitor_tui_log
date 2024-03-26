@@ -1,4 +1,3 @@
-#include <memory>  // for shared_ptr, allocator, __shared_ptr_access
 #include <string>
 
 #include "ftxui/component/component.hpp"  // for Renderer, ResizableSplitBottom, ResizableSplitLeft, ResizableSplitRight, ResizableSplitTop
@@ -10,7 +9,7 @@
 using namespace ftxui;
 
 std::function<void()> handleMenuClick(MainWindow &win)
-// возможно содание такой функции ошибка
+// возможно создание такой функции ошибка
 {
     return [&]
     {
@@ -19,12 +18,12 @@ std::function<void()> handleMenuClick(MainWindow &win)
     };
 }
 
-MainWindow::MainWindow(size_t countTabulations)
-    : title_("Monitor log")
+MainWindow::MainWindow(size_t countTabulations_)
+    : title_("Monitor log"), countTabulations(countTabulations_)
 {
     for (size_t i = 0; i < countTabulations; i++) {
         tab_titles.push_back("Tab " + std::to_string(i + 1));
-        itemsWindow.push_back(TabController());
+        itemsWindow.emplace_back();
     }
 }
 
@@ -33,12 +32,12 @@ void MainWindow::Run()
 
     auto screen = ScreenInteractive::Fullscreen();
 
-    // Instanciate the main and modal components:
+    // Instance the main and modal components:
     bool modal_shown = false; //отображается ли окно или нет
     std::string filePath; //путь до файла, который передается через диалоговое окно
     auto modal_component = DialogComponent(filePath, exportFile(), hideModal(modal_shown));
 
-    auto input_key = Input(&key, "key entry field", {.on_change = filterOwner(key)});
+    auto input_key = Input(&key, "key entry field", {.on_change = filterOwner()});
 
     auto buttonExport = Button("Export", showModal(modal_shown));
 
@@ -60,23 +59,14 @@ void MainWindow::Run()
                     });
     });
 
-    // for Test
-    auto bla1 = Renderer(itemsWindow[0].containerLog, [&]
-    { return hflow({itemsWindow[0].containerLog->Render() | vscroll_indicator | yframe | xflex,}); });
-    auto bla2 = Renderer(itemsWindow[1].containerLog, [&]
-    { return hflow({itemsWindow[1].containerLog->Render() | vscroll_indicator | yframe | xflex,}); });
-    auto bla3 = Renderer(itemsWindow[2].containerLog, [&]
-    { return hflow({itemsWindow[2].containerLog->Render() | vscroll_indicator | yframe | xflex,}); });
+    //добавление в tab обьектов, для отображения
+    auto tab = Container::Tab( {},&selected_tab );
+    for (size_t i = 0; i < countTabulations; i++) {
+        tab->Add( Renderer(itemsWindow[i].containerLog, [i, this]
+        { return hflow({itemsWindow[i].containerLog->Render() | vscroll_indicator | yframe | xflex,}); }) );
+    }
 
-    auto tab = Container::Tab(
-        {
-            bla1,
-            bla2,
-            bla3,
-        },
-        &selected_tab);
-
-    int size = 30;
+    int size = 30; //размер окна по умолчанию, который может меня окно
     auto tab_toggle = HMenu(&tab_titles, &selected_tab, *this);
 
     auto layout = ResizableSplitLeft(leftContainer, tab, &size);
@@ -103,7 +93,7 @@ void MainWindow::Run()
 
 }
 
-// Это обработчкик событий сохранения файла
+// Это обработчик событий сохранения файла
 std::function<void()> MainWindow::exportFile()
 {
     return [&]
@@ -125,12 +115,12 @@ std::function<void()> MainWindow::hideModal(bool &modal_shown)
         modal_shown = false;
     };
 }
-std::function<void()> MainWindow::filterOwner(std::string &key)
+std::function<void()> MainWindow::filterOwner()
 {
-    // так как мы знаем selected_tab очень удобно управлять обьектами
+    // так как мы знаем selected_tab очень удобно управлять объектами
     return [&]
     {
-        itemsWindow[selected_tab].keyFilter = key; // для сохранения значения фильтра
+        itemsWindow[selected_tab].keyFilter = this->key; // для сохранения значения фильтра
 
         itemsWindow[selected_tab].containerLog->DetachAllChildren();
 
@@ -143,7 +133,7 @@ std::function<void()> MainWindow::filterOwner(std::string &key)
         else
         {
             for (auto &it : itemsWindow[selected_tab].getBufferLogs()) {
-                if (key.compare(it.owner) == 0) {
+                if (this->key == it.owner) {
                     itemsWindow[selected_tab].appendLogToWindow(it);
                 }
             }
