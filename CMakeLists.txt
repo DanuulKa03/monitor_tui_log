@@ -124,6 +124,10 @@ target_link_libraries(HMenu
         PUBLIC MainWindow
 )
 
+target_link_libraries(LogValidator
+        PUBLIC nlohmann_json::nlohmann_json
+        PUBLIC Boost::regex
+)
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC MainWindow
