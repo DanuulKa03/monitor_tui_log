@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
     std::ifstream in;
     bool read_from_file = false;
 
-    MainWindow app(3);
+    MainWindow app(1);
 
     while ((prog_opt = getopt(argc, argv, "f:l")) != -1) {
         switch (prog_opt) {
